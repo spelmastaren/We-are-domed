@@ -51,7 +51,8 @@ wss.on("listening", () => {
 
 wss.on("connection", (socket) => {
     console.log("Client connected");
-    players.set(socket, new player("Player" + players.size));
+    players.set(socket, new player("Player: " + players.size + 1));
+    console.log("Assigned username:", players.get(socket).Username);
     socket.on("message", handelemessage);
     socket.on("close", () => {
         console.log("Client disconnected:", players.get(socket).Username);
