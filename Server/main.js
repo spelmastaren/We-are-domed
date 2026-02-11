@@ -44,6 +44,9 @@ class enemy {
     };
 };
 
+wss.on("listening", () => {
+    console.log("Server is sucsessfully started and redy to accept connections");
+}
 
 
 wss.on("connection", (socket) => {
