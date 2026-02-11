@@ -53,7 +53,10 @@ wss.on("listening", () => {
 wss.on("connection", (socket) => {
     console.log("Client connected");
     players.set(socket, new player("Player " + playerjoinnumber));
+    socket.send(JSON.stringify({ type: "Connection", data: { username: players.get(socket).Username } }));
     playerjoinnumber++;
+
+
     console.log("Assigned username:", players.get(socket).Username);
     socket.on("message", handelemessage);
     socket.on("close", () => {
