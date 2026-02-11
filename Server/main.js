@@ -2,6 +2,7 @@ console.log("Server initialized");
 const ws = require("ws");
 const wss = new ws.Server({ port: 8080 });
 
+let playerjoinnumber = 1;
 let lobbys = new Map();
 let players = new Map();
 
@@ -51,7 +52,8 @@ wss.on("listening", () => {
 
 wss.on("connection", (socket) => {
     console.log("Client connected");
-    players.set(socket, new player("Player " + (players.size + 1)));
+    players.set(socket, new player("Player " + playerjoinnumber));
+    playerjoinnumber++;
     console.log("Assigned username:", players.get(socket).Username);
     socket.on("message", handelemessage);
     socket.on("close", () => {
