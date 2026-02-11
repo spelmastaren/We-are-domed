@@ -15,11 +15,9 @@ class ServerComnicationHandler():
         self.username = json.loads(self.connection.recv())["data"]["username"]
         print("Username received from server:", self.username)
 
-
-    ##def run(self):
-    ##    while True:
-    ##        # Here we would handle communication with the server
-    ##        pass
+    def JoinLobbyWhitID(self,ID):
+        self.connection.send(json.dumps({"type": "join", "data": {"lobby_id": ID}}))
+        
 
 
 
