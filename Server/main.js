@@ -3,6 +3,7 @@ const ws = require("ws");
 const wss = new ws.Server({ port: 8080 });
 
 let lobys = new Map();
+let players = new Map();
 
 class lobby {
     constructor(name) {
@@ -47,8 +48,10 @@ class enemy {
 
 wss.on("connection", (socket) => {
     console.log("Client connected");
+    players.set(socket, new player("Player" + players.size));
     socket.on("message", handelemessage);
     socket.on("close", () => {
-        console.log("Client disconnected");
+        console.log("Client disconnected:", players.get(socket).Username);
+        players.delete(socket);
     });
 });
