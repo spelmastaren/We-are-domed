@@ -18,7 +18,8 @@ class lobby {
 
 function handelemessage(message) {
     console.log("Received message:", message);
-    JSON.parse(message)
+    const messageJSON = JSON.parse(message);
+    console.log("Parsed message:", messageJSON);
 };
 
 function randomizemap() {

@@ -30,7 +30,7 @@ isRunning = True
 
 serverhandler = ServerComnicationHandler()
 
-
+serverhandler.JoinLobbyWhitID(1)
 while isRunning:
 
     for event in pygame.event.get():
