@@ -2,7 +2,7 @@ console.log("Server initialized");
 const ws = require("ws");
 const wss = new ws.Server({ port: 8080 });
 
-let lobys = new map();
+let lobys = new Map();
 
 class lobby {
     constructor(name) {
