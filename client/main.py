@@ -1,14 +1,23 @@
 import threading
 import pygame
+import websockets
+
+## Setting game state to 0, which means that the game is in the start menu state. 
+gamestate = 0
+
 
 class ServerComnicationHandler():
-    print("ServerComnicationHandler initialized")
+    ##def __init__(self):
+    ##    
+
+    ##def run(self):
+    ##    while True:
+    ##        # Here we would handle communication with the server
+    ##        pass
 
 
 
 
-def draw_map(screen, map):
-    screen.fill((0, 0, 0))
 
 pygame.init()
 screen = pygame.display.set_mode((500, 500), pygame.RESIZABLE)
@@ -22,7 +31,6 @@ while isRunning:
             isRunning = False
             break
 
-    draw_map(screen, map)
     pygame.display.flip()
 
 
