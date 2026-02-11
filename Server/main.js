@@ -3,6 +3,8 @@ const ws = require("ws");
 const wss = new ws.Server({ port: 8080 });
 
 let playerjoinnumber = 1;
+let serverIDadding = 1;
+
 let lobbys = new Map();
 let players = new Map();
 
@@ -16,6 +18,7 @@ class lobby {
 
 function handelemessage(message) {
     console.log("Received message:", message);
+    JSON.parse(message)
 };
 
 function randomizemap() {
