@@ -31,11 +31,11 @@ function randomizemap() {
 };
 
 class player {
-    constructor(name) {
+    constructor(name, socket) {
         this.Username = name;
         this.position = { x: 0, y: 0 };
         this.lobby = null;
-
+        this.conection = socket;
     };
 };
 
@@ -52,7 +52,7 @@ wss.on("listening", () => {
 
 wss.on("connection", (socket) => {
     console.log("Client connected");
-    players.set(socket, new player("Player " + playerjoinnumber));
+    players.set(socket, new player("Player " + playerjoinnumber,socket));
     socket.send(JSON.stringify({ type: "Connection", data: { username: players.get(socket).Username } }));
     playerjoinnumber++;
 
