@@ -1,14 +1,19 @@
 import threading
 import pygame
 import websockets
+from websockets.sync.client import connect
 
 ## Setting game state to 0, which means that the game is in the start menu state. 
 gamestate = 0
 
 
 class ServerComnicationHandler():
-    ##def __init__(self):
-    ##    
+    print("Server Communication Handler Initialized")
+    def __init__(self):
+        self.connection = connect('wss://we-are-domed.onrender.com/')
+        self.connection.send("Hello Server!")
+        print("Message sent to server: Hello Server!")
+
 
     ##def run(self):
     ##    while True:
@@ -23,6 +28,9 @@ pygame.init()
 screen = pygame.display.set_mode((500, 500), pygame.RESIZABLE)
 
 isRunning = True
+
+serverhandler = ServerComnicationHandler()
+
 
 while isRunning:
 
