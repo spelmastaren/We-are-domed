@@ -10,16 +10,56 @@ let players = new Map();
 
 class lobby {
     constructor(name) {
-        this.name = name;
+        this.ID = name;
         this.map = randomizemap();
         this.players = [];
+        this.open = true;
     };
 };
 
-function handelemessage(message) {
+function createLobby() {
+    const lobby = new lobby(serverIDadding);
+    lobbys.set(serverIDadding, lobby);
+    serverIDadding++;
+    return lobby;
+}
+
+
+
+function handelemessage(message,socket) {
     console.log("Received message:", message);
     const messageJSON = JSON.parse(message);
+    const player = players.get(socket);
     console.log("Parsed message:", messageJSON);
+    // If client askes to create a lobby a new lobby is created and the player is added to it
+    if (messageJSON.type === "CreateLobby") {
+        // creates a new lobby and adds the player to it
+        const lobby = createLobby();
+        lobby.players.push(player);
+        player.lobby = lobby;
+        console.log("Lobby created with ID:", lobby.ID);
+        socket.send(JSON.stringify({ type: "LobbyCreated", data: { lobbyID: lobby.ID, success: true } }));
+    }
+    // If client askes for all players in a lobby thay gets the username and if its them self or not
+    if (messageJSON.type === "ShowPlayersInLobby") {
+        const lobby = player.lobby;
+        if (lobby == null) {
+            socket.send(JSON.stringify({ type: "error", data: { message: "Player is not in a lobby" } }));
+            return;
+        } else {
+            let PlayerInfos = [];
+            lobby.players.forEach(player => {
+                PlayerInfos.push({
+                    Username: player.Username,
+                    ThisIsYou: player === players.get(socket)
+                });
+            });
+
+            socket.send(JSON.stringify({ type: "PlayersInLobby", data: { players:  PlayerInfos} }));
+        }
+    };
+
+    
 };
 
 function randomizemap() {
@@ -62,7 +102,7 @@ wss.on("connection", (socket) => {
 
 
     console.log("Assigned username:", players.get(socket).Username);
-    socket.on("message", handelemessage);
+    socket.on("message", (message) => handelemessage(message,socket));
     socket.on("close", () => {
         console.log("Client disconnected:", players.get(socket).Username);
         players.delete(socket);

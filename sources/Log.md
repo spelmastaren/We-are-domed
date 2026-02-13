@@ -4,3 +4,5 @@ Uppdateringar
 
 
 2026-02-13-Hemma. Denna gång utvecklade jag en sak för att gå med i lobbys men jag blev inte rioktigt färdig. Detta gjorde jag genom att lägga till en funktion i klassen serverhandler för python och försöke skriva ut JASON meddelandet i servern. En så länge har jag bara fått det i vad som ser ut som hexa decimal.
+
+2026-02-13-Ai-Letion. Denna lektion fokuserade jag på server kod nu kan man lägga till lobbys och se spelarna i lobbyn med deras andvändarnam och möjligheten att veta vem som var du. Det gör att jag snart kan göra en meny i klienten som gör så du kan starta spelet med dina vänner.
