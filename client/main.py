@@ -6,6 +6,7 @@ import json
 
 ## Setting game state to 0, which means that the game is in the start menu state. 
 gamestate = 0
+IsConnectedInLobby = False
 
 
 class ServerComnicationHandler():
@@ -27,6 +28,26 @@ class ServerComnicationHandler():
     def CreateLobby(self):
         self.connection.send(json.dumps({"type": "CreateLobby", "data": {}}))
 
+    def StartGame(self):
+        self.connection.send(json.dumps({"type": "StartGame", "data": {}}))
+
+    def HandleBingInLobby(self):
+        global IsConnectedInLobby
+        IsConnectedInLobby = True
+        while IsConnectedInLobby:
+            message = self.connection.recv()
+            messageJSON = json.loads(message)
+            if messageJSON["type"] == "GameStarted":
+                print("Game started with map:", messageJSON["data"]["map"])
+                self.map = messageJSON["data"]["map"]
+                global gamestate
+                gamestate = 4
+                break
+            if gamestate == 4 and messageJSON["type"] == "UpdateLocations":
+                print("Received player location updates:", messageJSON["data"]["players"])
+                
+
+
 
 
 
@@ -37,7 +58,8 @@ isRunning = True
 
 serverhandler = ServerComnicationHandler()
 
-serverhandler.JoinLobbyWhitID(1)
+serverhandler.CreateLobby()
+ServerComnicationHandler.StartGame(serverhandler)
 while isRunning:
 
     for event in pygame.event.get():
