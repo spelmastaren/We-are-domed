@@ -24,9 +24,12 @@ class ServerComnicationHandler():
 
     def JoinLobbyWhitID(self,ID):
         self.connection.send(json.dumps({"type": "join", "data": {"lobby_id": ID}}))
+        threading.Thread(target=self.HandleBingInLobby).start()
         
     def CreateLobby(self):
+        print("Creating lobby...")
         self.connection.send(json.dumps({"type": "CreateLobby", "data": {}}))
+        threading.Thread(target=self.HandleBingInLobby).start()
 
     def StartGame(self):
         self.connection.send(json.dumps({"type": "StartGame", "data": {}}))
@@ -42,7 +45,7 @@ class ServerComnicationHandler():
                 self.map = messageJSON["data"]["map"]
                 global gamestate
                 gamestate = 4
-                break
+                print("Starting game...")
             if gamestate == 4 and messageJSON["type"] == "UpdateLocations":
                 print("Received player location updates:", messageJSON["data"]["players"])
                 

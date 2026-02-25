@@ -29,7 +29,7 @@ class lobby {
 
         // Send updated player info to all players in the lobby
         for (const player of this.players) {
-            if (player.conection.readyState === ws.OPEN) {
+            if (player.conection.readyState === WebSocket.OPEN) {
                 player.conection.send(JSON.stringify({ type: "UpdateLocations", data: { players: playerInfos } }));
             }
         }
