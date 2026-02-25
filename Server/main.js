@@ -33,7 +33,7 @@ class lobby {
                 player.conection.send(JSON.stringify({ type: "UpdateLocations", data: { players: playerInfos } }));
             }
         }
-    };
+    }
 };
 
 function createLobby() {
@@ -53,7 +53,7 @@ function handelemessage(message,socket) {
     // If client askes to create a lobby a new lobby is created and the player is added to it
     if (messageJSON.type === "CreateLobby") {
         // creates a new lobby and adds the player to it
-        const lobby = createLobby();
+        let lobby = createLobby();
         lobby.players.push(player);
         player.lobby = lobby;
         console.log("Lobby created with ID:", lobby.ID);
