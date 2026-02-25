@@ -7,3 +7,5 @@ https://www.w3schools.com/nodejs/nodejs_websockets.asp
 Map usage in javascript:
 https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Map
 
+Raycasting tetorial
+https://www.youtube.com/watch?v=5xyeWBxmqzc&list=PLlYT7ZZOcBNA1hVBjkKFMnW0YDDODdy40
