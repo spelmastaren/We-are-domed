@@ -37,10 +37,10 @@ class lobby {
 };
 
 function createLobby() {
-    const lobby = new lobby(serverIDadding);
-    lobbys.set(serverIDadding, lobby);
+    const Lobby = new lobby(serverIDadding);
+    lobbys.set(serverIDadding, Lobby);
     serverIDadding++;
-    return lobby;
+    return Lobby;
 }
 
 
