@@ -39,7 +39,7 @@ function handelemessage(message,socket) {
         player.lobby = lobby;
         console.log("Lobby created with ID:", lobby.ID);
         socket.send(JSON.stringify({ type: "LobbyCreated", data: { lobbyID: lobby.ID, success: true } }));
-    }
+    };
     // If client askes for all players in a lobby thay gets the username and if its them self or not
     if (messageJSON.type === "ShowPlayersInLobby") {
         const lobby = player.lobby;
@@ -57,9 +57,7 @@ function handelemessage(message,socket) {
 
             socket.send(JSON.stringify({ type: "PlayersInLobby", data: { players:  PlayerInfos} }));
         }
-    };
-
-    
+    };    
 };
 
 function randomizemap() {

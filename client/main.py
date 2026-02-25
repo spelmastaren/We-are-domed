@@ -24,7 +24,8 @@ class ServerComnicationHandler():
     def JoinLobbyWhitID(self,ID):
         self.connection.send(json.dumps({"type": "join", "data": {"lobby_id": ID}}))
         
-
+    def CreateLobby(self):
+        self.connection.send(json.dumps({"type": "CreateLobby", "data": {}}))
 
 
 
