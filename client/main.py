@@ -11,9 +11,15 @@ gamestate = 0
 class ServerComnicationHandler():
     print("Server Communication Handler Initialized")
     def __init__(self):
-        self.connection = connect('wss://we-are-domed.onrender.com/')
-        self.username = json.loads(self.connection.recv())["data"]["username"]
-        print("Username received from server:", self.username)
+        ConnectionAttemt = 0
+        while ConnectionAttemt < 5:
+            try:
+                self.connection = connect('wss://we-are-domed.onrender.com/')
+                self.username = json.loads(self.connection.recv())["data"]["username"]
+                print("Username received from server:", self.username)
+                break
+            except TimeoutError:
+                ConnectionAttemt += 1
 
     def JoinLobbyWhitID(self,ID):
         self.connection.send(json.dumps({"type": "join", "data": {"lobby_id": ID}}))
