@@ -14,6 +14,25 @@ class lobby {
         this.map = randomizemap();
         this.players = [];
         this.open = true;
+        this.Interval = null;
+    };
+
+    GameUpdate() {
+        // makes a list with all player names and positions
+        let playerInfos = [];
+        for (const player of this.players) {
+            playerInfos.push({
+                Username: player.Username,
+                Position: player.position
+            });
+        }
+
+        // Send updated player info to all players in the lobby
+        for (const player of this.players) {
+            if (player.conection.readyState === ws.OPEN) {
+                player.conection.send(JSON.stringify({ type: "UpdatePlayers", data: { players: playerInfos } }));
+            }
+        }
     };
 };
 
@@ -54,10 +73,26 @@ function handelemessage(message,socket) {
                     ThisIsYou: player === players.get(socket)
                 });
             });
-
+            lobby.Interval = setInterval(() => lobby.GameUpdate(), 1);
             socket.send(JSON.stringify({ type: "PlayersInLobby", data: { players:  PlayerInfos} }));
         }
     };    
+    if (messageJSON.type === "StartGame") {
+        const lobby = player.lobby;
+        if (lobby == null) {
+            socket.send(JSON.stringify({ type: "error", data: { message: "Player is not in a lobby" } }));
+            return;
+        } else {
+            lobby.open = false;
+            for (const player of lobby.players) {
+                if (player.conection.readyState === ws.OPEN) {
+                    player.conection.send(JSON.stringify({ type: "GameStarted", data: { map: lobby.map } }));
+                } else {
+                    player.conection.close();
+                }
+            }
+        }
+    };
 };
 
 function randomizemap() {
