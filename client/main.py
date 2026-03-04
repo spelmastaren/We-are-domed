@@ -35,6 +35,10 @@ class ServerComnicationHandler():
     def StartGame(self):
         self.connection.send(json.dumps({"type": "StartGame", "data": {}}))
 
+    @setattr
+    def SendPlayerLocation(self, x, y):
+        self.connection.send(json.dumps({"type": "UpdateMovementInput", "data": {"x": x, "y": y}}))
+
     def HandleBingInLobby(self):
         global IsConnectedInLobby
         global Rotation
@@ -74,19 +78,26 @@ while isRunning:
         if event.type == pygame.QUIT:
             isRunning = False
             break
+        if event.type == pygame.KEYDOWN:
+            if gamestate == 4:
+                if event.key == pygame.K_q:
+                    Rotation -= math.pi/8
+                if event.key == pygame.K_e:
+                    Rotation += math.pi/8
     if gamestate == 4:
         screen.fill((0, 0, 255))
         Map = serverhandler.map
-        x,y = serverhandler.LocalPlayerLocation["x"], serverhandler.LocalPlayerLocation["y"]
         for i in range(60):
+            x,y = serverhandler.LocalPlayerLocation["x"], serverhandler.LocalPlayerLocation["y"]
             rot_i = Rotation + math.radians(i-30)
             sin = 0.02 * math.sin(rot_i)
             cos = 0.02 * math.cos(rot_i)
-            for n in range(40):
+            for n in range(200):
                 x += cos
                 y += sin
                 if Map[int(y)][int(x)] == 1:
-                    pygame.draw.line(screen, (255 - n, 255, 0 + n), (i*screen.get_width()//60, 250), ((i*screen.get_width()//60) + cos * n * 10, 250 * n * 10),screen.get_width()//60)
+                    ## Writes the lines for the walls on screan
+                    pygame.draw.line(screen, (255 - n, 255 - n, 255 - n), ((screen.get_width()//60) * i, screen.get_height()//2 + (n*screen.get_height()//40)), (screen.get_width()//60*i, screen.get_height()//2 - (n*screen.get_height()//40)), 5)
                     break
                 screen.get_height()//2 + sin
 
