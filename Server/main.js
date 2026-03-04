@@ -21,7 +21,7 @@ class lobby {
         // makes a list with all player names and positions
         let playerInfos = [];
         for (const player of this.players) {
-            player.position.x += Math.random() + 0.001
+            player.position.x += 0.01;
             playerInfos.push({
                 Username: player.Username,
                 Position: player.position
