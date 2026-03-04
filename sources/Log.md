@@ -12,3 +12,6 @@ Denna lektion fokuserade jag på server kod nu kan man lägga till lobbys och se
 
 2026-02-25-Programeringslektion
 Denna lektion har jag fixat så att clienten försöker ansluta till servern 5 gånger om det inte går. Sedan ger den upp och klagar på ditt internet. Sedan har jag även tagit och gjort så att servern kan ha en lobby stänga den och starta spelet när en spelare vill det. Då sickas hala kartan till spelarna och servern börjar sicka allas positioner. Till alla spelare i lobbyn. I slutet av lektionen kollar jag på hemsidor på hur man kan rita en 3d raycastad miljö på skärmen.
+
+2026-03-04-Programering
+Denna lektionen så fixade jag så man kan se med ett raycast perspektiv och gjorde att servern rör dig i konstant fart framåt på x axeln.
