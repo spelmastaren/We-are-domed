@@ -19,6 +19,7 @@ class ServerComnicationHandler():
                 self.connection = connect('wss://we-are-domed.onrender.com/')
                 self.username = json.loads(self.connection.recv())["data"]["username"]
                 print("Username received from server:", self.username)
+                self.LocalPlayerLocation = {"x": 5, "y": 5}
                 break
             except TimeoutError:
                 ConnectionAttemt += 1
@@ -35,7 +36,6 @@ class ServerComnicationHandler():
     def StartGame(self):
         self.connection.send(json.dumps({"type": "StartGame", "data": {}}))
 
-    @setattr
     def SendPlayerLocation(self, x, y):
         self.connection.send(json.dumps({"type": "UpdateMovementInput", "data": {"x": x, "y": y}}))
 
@@ -53,10 +53,10 @@ class ServerComnicationHandler():
                 gamestate = 4
                 Rotation = math.pi / 4
                 print("Starting game...")
-                self.LocalPlayerLocation = {"x": 0, "y": 0}
+                self.LocalPlayerLocation = {"x": 5, "y": 5}
             if gamestate == 4 and messageJSON["type"] == "UpdateLocations":
                 self.Playerlocations = messageJSON["data"]["players"]
-                self.LocalPlayerLocation = self.Playerlocations[self.username]
+                ##self.LocalPlayerLocation = self.Playerlocations[self.username]
                 
 
 
@@ -90,16 +90,16 @@ while isRunning:
         for i in range(60):
             x,y = serverhandler.LocalPlayerLocation["x"], serverhandler.LocalPlayerLocation["y"]
             rot_i = Rotation + math.radians(i-30)
-            sin = 0.02 * math.sin(rot_i)
-            cos = 0.02 * math.cos(rot_i)
+            sin = 0.05 * math.sin(rot_i)
+            cos = 0.05 * math.cos(rot_i)
             for n in range(200):
                 x += cos
                 y += sin
-                if Map[int(y)][int(x)] == 1:
+                screenwidth = screen.get_width()
+                if Map[int(x)][int(y)] == 1:
                     ## Writes the lines for the walls on screan
-                    pygame.draw.line(screen, (255 - n, 255 - n, 255 - n), ((screen.get_width()//60) * i, screen.get_height()//2 + (n*screen.get_height()//40)), (screen.get_width()//60*i, screen.get_height()//2 - (n*screen.get_height()//40)), 5)
+                    pygame.draw.line(screen, (255, 255,255), (screen.get_width()//60*i, screen.get_height()//2+n), (screen.get_width()//60*i, screen.get_height()//2-n),screenwidth//60)
                     break
-                screen.get_height()//2 + sin
 
     pygame.display.flip()
 
