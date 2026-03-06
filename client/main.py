@@ -36,7 +36,7 @@ class ServerComnicationHandler():
     def StartGame(self):
         self.connection.send(json.dumps({"type": "StartGame", "data": {}}))
 
-    def SendPlayerLocation(self, x, y):
+    def updateMovmentInput(self, x, y):
         self.connection.send(json.dumps({"type": "UpdateMovementInput", "data": {"x": x, "y": y}}))
 
     def HandleBingInLobby(self):

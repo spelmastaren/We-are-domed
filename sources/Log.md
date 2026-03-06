@@ -17,4 +17,4 @@ Denna lektion har jag fixat så att clienten försöker ansluta till servern 5 g
 Denna lektionen så fixade jag så man kan se med ett raycast perspektiv och gjorde att servern rör dig i konstant fart framåt på x axeln.
 
 2026-03-04-Hemma
-Denna gång fick jag raycasting att funngera med något som jonathan kallar fisheye effect. Jag vet inte vad det kommer ifrån sedan fixade jag också buggen med att servern aldrig sickade vart alla var eller något sådant. Så nu gör servern det varje 100 milisekunder. Nu kan jag äntligen synka spelarna i samma lobby.
+Denna gång fick jag raycasting att funngera med något som jonathan kallar fisheye effect. Jag vet inte vad det kommer ifrån sedan fixade jag också buggen med att servern aldrig sickade vart alla var eller något sådant. Så nu gör servern det varje 100 milisekunder. Nu kan jag äntligen synka spelarna i samma lobby.Jag gjorde även kartan mycket större och lade till väggar.
