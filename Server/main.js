@@ -32,6 +32,8 @@ class lobby {
         for (const player of this.players) {
             if (player.conection.readyState === WebSocket.OPEN) {
                 player.conection.send(JSON.stringify({ type: "UpdateLocations", data: { players: playerInfos } }));
+            } else {
+                console.log("Player connection Missed, removing player:", player.Username);
             }
         }
     }

@@ -53,10 +53,10 @@ class ServerComnicationHandler():
                 gamestate = 4
                 Rotation = math.pi / 4
                 print("Starting game...")
-                self.LocalPlayerLocation = {"x": 5, "y": 5}
+                self.LocalPlayerLocation = {"x": 10.0, "y": 10.0}
             if gamestate == 4 and messageJSON["type"] == "UpdateLocations":
                 self.Playerlocations = messageJSON["data"]["players"]
-                ##self.LocalPlayerLocation = self.Playerlocations[self.username]
+                print("Player locations updated:", self.Playerlocations)
                 
 
 
@@ -90,8 +90,8 @@ while isRunning:
         for i in range(60):
             x,y = serverhandler.LocalPlayerLocation["x"], serverhandler.LocalPlayerLocation["y"]
             rot_i = Rotation + math.radians(i-30)
-            sin = 0.05 * math.sin(rot_i)
-            cos = 0.05 * math.cos(rot_i)
+            sin = 0.01 * math.sin(rot_i)
+            cos = 0.01 * math.cos(rot_i)
             for n in range(200):
                 x += cos
                 y += sin
@@ -100,8 +100,10 @@ while isRunning:
                     ## Writes the lines for the walls on screan
                     pygame.draw.line(screen, (255, 255,255), (screen.get_width()//60*i, screen.get_height()//2+n), (screen.get_width()//60*i, screen.get_height()//2-n),screenwidth//60)
                     break
+            
 
     pygame.display.flip()
+
 
 
 pygame.quit()
