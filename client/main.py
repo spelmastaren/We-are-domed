@@ -46,7 +46,6 @@ class ServerComnicationHandler():
         while IsConnectedInLobby:
             message = self.connection.recv()
             messageJSON = json.loads(message)
-            print("Message received from server:", messageJSON)
             if messageJSON["type"] == "GameStarted":
                 print("Game started with map:", messageJSON["data"]["map"])
                 self.map = messageJSON["data"]["map"]
@@ -57,6 +56,10 @@ class ServerComnicationHandler():
                 self.LocalPlayerLocation = {"x": 10.0, "y": 10.0}
             if gamestate == 4 and messageJSON["type"] == "UpdateLocations":
                 self.Playerlocations = messageJSON["data"]
+                for player in self.Playerlocations["players"]:
+                    if player["Username"] == self.username:
+                        self.LocalPlayerLocation = {"x": player["x"], "y": player["y"]}
+                        break
                 print("Player locations updated:", self.Playerlocations)
                 
 
