@@ -22,6 +22,7 @@ class lobby {
         let playerInfos = [];
         for (const player of this.players) {
             player.position.x += 0.01;
+            player.position.y += 0.01;
             playerInfos.push({
                 Username: player.Username,
                 Position: player.position

@@ -58,7 +58,7 @@ class ServerComnicationHandler():
                 self.Playerlocations = messageJSON["data"]
                 for player in self.Playerlocations["players"]:
                     if player["Username"] == self.username:
-                        self.LocalPlayerLocation = {"x": player["x"], "y": player["y"]}
+                        self.LocalPlayerLocation = player["Position"]
                         break
                 print("Player locations updated:", self.Playerlocations)
                 
