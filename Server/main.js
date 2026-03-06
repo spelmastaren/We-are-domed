@@ -94,6 +94,7 @@ function handelemessage(message,socket) {
                     player.conection.close();
                 }
             }
+            setInterval(() => lobby.GameUpdate(), 100);
         }
     };
 };

@@ -46,6 +46,7 @@ class ServerComnicationHandler():
         while IsConnectedInLobby:
             message = self.connection.recv()
             messageJSON = json.loads(message)
+            print("Message received from server:", messageJSON)
             if messageJSON["type"] == "GameStarted":
                 print("Game started with map:", messageJSON["data"]["map"])
                 self.map = messageJSON["data"]["map"]
@@ -55,7 +56,7 @@ class ServerComnicationHandler():
                 print("Starting game...")
                 self.LocalPlayerLocation = {"x": 10.0, "y": 10.0}
             if gamestate == 4 and messageJSON["type"] == "UpdateLocations":
-                self.Playerlocations = messageJSON["data"]["players"]
+                self.Playerlocations = messageJSON["data"]
                 print("Player locations updated:", self.Playerlocations)
                 
 
@@ -98,7 +99,7 @@ while isRunning:
                 screenwidth = screen.get_width()
                 if Map[int(x)][int(y)] == 1:
                     ## Writes the lines for the walls on screan
-                    pygame.draw.line(screen, (255, 255,255), (screen.get_width()//60*i, screen.get_height()//2+n), (screen.get_width()//60*i, screen.get_height()//2-n),screenwidth//60)
+                    pygame.draw.line(screen, (255-n, 255-n,255-n), (screen.get_width()//60*i, screen.get_height()//2+n), (screen.get_width()//60*i, screen.get_height()//2-n),screenwidth//60)
                     break
             
 
