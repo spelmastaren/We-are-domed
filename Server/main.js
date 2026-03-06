@@ -98,10 +98,14 @@ function handelemessage(message,socket) {
 
 function randomizemap() {
     const map = [];
-    for (let i = 0; i < 10; i++) {
+    for (let i = 0; i < 100; i++) {
         const row = [];
-        for (let j = 0; j < 10; j++) {
-            row.push(Math.random() < 0.4 ? 1 : 0); // 20% chance of being a wall
+        for (let j = 0; j < 100; j++) {
+            if (i === 0 || i === 99 || j === 0 || j === 99) {
+                row.push(1); // Border walls
+            } else {
+                row.push(Math.random() < 0.4 ? 1 : 0); // 20% chance of being a wall
+            }
         };
         map.push(row);
     };
