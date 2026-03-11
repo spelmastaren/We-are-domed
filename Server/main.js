@@ -130,7 +130,7 @@ class player {
         this.Username = name;
         this.position = { x: 0, y: 0 };
         this.lobby = null;
-        this.currentInput = {"x":0,"y":0};
+        this.currentInput = { x: 0, y: 0};
         this.conection = socket;
     };
 };
