@@ -39,8 +39,9 @@ class ServerComnicationHandler():
         self.connection.send(json.dumps({"type": "StartGame", "data": {}}))
 
     def updateMovmentInput(self, x, y):
-        self.connection.send(json.dumps({"type": "UpdateMovementInput", "data": {"x": x, "y": y}}))
-        self.CurentMovment != {"x":x,"y":y}
+        if self.CurentMovment != {"x": x, "y": y}:
+            self.connection.send(json.dumps({"type": "UpdateMovementInput", "data": {"x": x, "y": y}}))
+            self.CurentMovment = {"x": x,"y": y}
 
     def HandleBingInLobby(self):
         global IsConnectedInLobby
@@ -112,15 +113,27 @@ while isRunning:
                     break
         ## Movment logic
         pressed = pygame.key.get_pressed()
+        movebuttons = 0
+        forwardMovmentX = 0
+        forwardMovmentY = 0
         if pressed[pygame.K_w]:
-            dirx = math.cos(Rotation)
-            diry = math.sin(Rotation)
-            if serverhandler.CurentMovment != {"x":1*dirx,"y":1*diry}:
-                serverhandler.updateMovmentInput(1*dirx, 1*diry)
+            dirx = math.cos(Rotation) * 1
+            diry = math.sin(Rotation) * 1
+            forwardMovmentX = dirx * -1
+            forwardMovmentY = dirx * -1
+            movebuttons += 1
+        elif pressed[pygame.K_s]:
+            dirx = math.cos(Rotation) * 1
+            diry = math.sin(Rotation) * 1
+            forwardMovmentX = dirx * 1
+            forwardMovmentY = dirx * 1
+            movebuttons += 1
+            movebuttons += 1
+
+        if movebuttons != 0:
+            serverhandler.updateMovmentInput(forwardMovmentX, forwardMovmentY)
         else:
-            if serverhandler.CurentMovment != {"x":0,"y":0}:
-                serverhandler.updateMovmentInput(0, 0)
-        
+            serverhandler.updateMovmentInput(0, 0)
 
     pygame.display.flip()
 
