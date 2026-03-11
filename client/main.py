@@ -118,7 +118,7 @@ while isRunning:
             if serverhandler.CurentMovment != {"x":1*dirx,"y":1*diry}:
                 serverhandler.updateMovmentInput(1*dirx, 1*diry)
         else:
-            if serverhandler.CurentMovment != {0,0}:
+            if serverhandler.CurentMovment != {"x":0,"y":0}:
                 serverhandler.updateMovmentInput(0, 0)
         
 
