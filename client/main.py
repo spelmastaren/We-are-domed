@@ -94,7 +94,7 @@ while isRunning:
                 if event.key == pygame.K_w:
                     dirx = math.cos(Rotation)
                     diry = math.sin(Rotation)
-                    ServerComnicationHandler.updateMovmentInput(0.5*dirx, 0.5*diry)
+                    serverhandler.updateMovmentInput(0.5*dirx, 0.5*diry)
 
 
 
