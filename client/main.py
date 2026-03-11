@@ -22,6 +22,7 @@ class ServerComnicationHandler():
                 self.LocalPlayerLocation = {"x": 5, "y": 5}
                 break
             except TimeoutError:
+                print("Connection attempt failed, retrying...")
                 ConnectionAttemt += 1
 
     def JoinLobbyWhitID(self,ID):
