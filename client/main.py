@@ -20,6 +20,7 @@ class ServerComnicationHandler():
                 self.username = json.loads(self.connection.recv())["data"]["username"]
                 print("Username received from server:", self.username)
                 self.LocalPlayerLocation = {"x": 5, "y": 5}
+                self.CurentMovment = {"x": 0, "y": 0}
                 break
             except TimeoutError:
                 print("Connection attempt failed, retrying...")
@@ -39,6 +40,7 @@ class ServerComnicationHandler():
 
     def updateMovmentInput(self, x, y):
         self.connection.send(json.dumps({"type": "UpdateMovementInput", "data": {"x": x, "y": y}}))
+        self.CurentMovment != {"x":x,"y":y}
 
     def HandleBingInLobby(self):
         global IsConnectedInLobby
@@ -90,17 +92,6 @@ while isRunning:
                     Rotation -= math.pi/8
                 if event.key == pygame.K_e:
                     Rotation += math.pi/8
-        ## Player movement
-                if event.key == pygame.K_w:
-                    dirx = math.cos(Rotation)
-                    diry = math.sin(Rotation)
-                    serverhandler.updateMovmentInput(0.5*dirx, 0.5*diry)
-
-
-
-
-
-
                 
     if gamestate == 4:
         ## Raycasting
@@ -119,7 +110,17 @@ while isRunning:
                     ## Writes the lines for the walls on screan
                     pygame.draw.line(screen, (255-n, 255-n,255-n), (screen.get_width()//60*i, screen.get_height()//2+n), (screen.get_width()//60*i, screen.get_height()//2-n),screenwidth//60)
                     break
-            
+        ## Movment logic
+        pressed = pygame.key.get_pressed()
+        if pressed[pygame.K_w]:
+            dirx = math.cos(Rotation)
+            diry = math.sin(Rotation)
+            if serverhandler.CurentMovment != {"x":1*dirx,"y":1*diry}:
+                serverhandler.updateMovmentInput(1*dirx, 1*diry)
+        else:
+            if serverhandler.CurentMovment != {0,0}:
+                serverhandler.updateMovmentInput(0, 0)
+        
 
     pygame.display.flip()
 
