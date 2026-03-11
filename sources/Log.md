@@ -18,3 +18,7 @@ Denna lektionen så fixade jag så man kan se med ett raycast perspektiv och gjo
 
 2026-03-04-Hemma
 Denna gång fick jag raycasting att funngera med något som jonathan kallar fisheye effect. Jag vet inte vad det kommer ifrån sedan fixade jag också buggen med att servern aldrig sickade vart alla var eller något sådant. Så nu gör servern det varje 100 milisekunder. Nu kan jag äntligen synka spelarna i samma lobby.Jag gjorde även kartan mycket större och lade till väggar.
+
+2026-03-11-Hemma
+Denna stund så lade jag till logick som gjorde att jag kunde röra mig gennom att tryck w och s. Server blev lagig av att jag gjorde detta. Det löste jag med bara sicka input från spelaren när den ändras. Om den inte har ändrats finns den redan på servern och behöver inte sickas igen. Det verkar vara någon kanstig sak som lite roterar mig medans jag går men det får jag lösa sedan.
+
