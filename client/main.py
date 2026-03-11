@@ -83,13 +83,27 @@ while isRunning:
         if event.type == pygame.QUIT:
             isRunning = False
             break
+        ## Loking around
         if event.type == pygame.KEYDOWN:
             if gamestate == 4:
                 if event.key == pygame.K_q:
                     Rotation -= math.pi/8
                 if event.key == pygame.K_e:
                     Rotation += math.pi/8
+        ## Player movement
+                if event.key == pygame.K_w:
+                    dirx = math.cos(Rotation)
+                    diry = math.sin(Rotation)
+                    ServerComnicationHandler.updateMovmentInput(0.5*dirx, 0.5*diry)
+
+
+
+
+
+
+                
     if gamestate == 4:
+        ## Raycasting
         screen.fill((0, 0, 255))
         Map = serverhandler.map
         for i in range(60):

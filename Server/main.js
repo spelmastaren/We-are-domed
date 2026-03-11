@@ -1,6 +1,7 @@
 console.log("Server initialized");
 const ws = require("ws");
 const wss = new ws.Server({ port: 8080 });
+const PlayerSpeed = 1;
 
 let playerjoinnumber = 1;
 let serverIDadding = 1;
@@ -21,8 +22,8 @@ class lobby {
         // makes a list with all player names and positions
         let playerInfos = [];
         for (const player of this.players) {
-            player.position.x += 0.01;
-            player.position.y += 0.01;
+            player.position.x += player.currentInputs.x * PlayerSpeed;
+            player.position.y += player.currentInputs.y * PlayerSpeed;
             playerInfos.push({
                 Username: player.Username,
                 Position: player.position
@@ -98,6 +99,14 @@ function handelemessage(message,socket) {
             setInterval(() => lobby.GameUpdate(), 100);
         }
     };
+    if (messageJSON.type === "UpdateMovementInput") {
+        if (messageJSON.data["x"] > 1 || messageJSON.data["x"] < -1 || messageJSON.data["y"] > 1 || messageJSON.data["y"] < -1) {
+            socket.send(JSON.stringify({ type: "error", data: { message: "Movement input out of bounds" } }));
+            return;
+        }
+        player.currentInput.x = messageJSON.data["x"];
+        player.currentInput.y = messageJSON.data["y"];
+    }
 };
 
 function randomizemap() {
@@ -121,6 +130,7 @@ class player {
         this.Username = name;
         this.position = { x: 0, y: 0 };
         this.lobby = null;
+        this.currentInput = {"x":0,"y":0};
         this.conection = socket;
     };
 };
