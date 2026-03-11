@@ -22,8 +22,8 @@ class lobby {
         // makes a list with all player names and positions
         let playerInfos = [];
         for (const player of this.players) {
-            player.position.["x"] += player.currentInputs.["x"] * PlayerSpeed;
-            player.position.["y"] += player.currentInputs.["y"] * PlayerSpeed;
+            player.position.x += player.currentInputs.x * PlayerSpeed;
+            player.position.y += player.currentInputs.y * PlayerSpeed;
             playerInfos.push({
                 Username: player.Username,
                 Position: player.position
