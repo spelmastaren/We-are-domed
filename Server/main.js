@@ -1,7 +1,7 @@
 console.log("Server initialized");
 const ws = require("ws");
 const wss = new ws.Server({ port: 8080 });
-const PlayerSpeed = 1;
+const PlayerSpeed = 0.01;
 
 let playerjoinnumber = 1;
 let serverIDadding = 1;
@@ -54,7 +54,7 @@ function handelemessage(message,socket) {
     console.log("Received message:", message);
     const messageJSON = JSON.parse(message);
     const player = players.get(socket);
-    console.log("Parsed message:", messageJSON);
+    //console.log("Parsed message:", messageJSON);
     // If client askes to create a lobby a new lobby is created and the player is added to it
     if (messageJSON.type === "CreateLobby") {
         // creates a new lobby and adds the player to it
@@ -106,7 +106,6 @@ function handelemessage(message,socket) {
         }
         player.currentInput.x = messageJSON.data["x"];
         player.currentInput.y = messageJSON.data["y"];
-        console.log("Thing")
     }
 };
 
