@@ -106,6 +106,7 @@ function handelemessage(message,socket) {
         }
         player.currentInput.x = messageJSON.data["x"];
         player.currentInput.y = messageJSON.data["y"];
+        console.log("Thing")
     }
 };
 
