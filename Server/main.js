@@ -118,7 +118,7 @@ function randomizemap() {
             if (i === 0 || i === 99 || j === 0 || j === 99) {
                 row.push(1); // Border walls
             } else {
-                row.push(Math.random() < 0.4 ? 1 : 0); // 20% chance of being a wall
+                row.push(Math.random() < 0.4 ? 1 : 0); // 40% chance of being a wall
             }
         };
         map.push(row);
