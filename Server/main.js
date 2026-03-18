@@ -22,7 +22,7 @@ class lobby {
         // makes a list with all player names and positions
         let playerInfos = [];
         for (const player of this.players) {
-            if (self.map[Math.floor(player.position.yy + player.currentInput.y * PlayerSpeed)][Math.floor(player.position.x + player.currentInput.x * PlayerSpeed)] === 0) {
+            if (self.map[Math.floor(player.position.y + player.currentInput.y * PlayerSpeed)][Math.floor(player.position.x + player.currentInput.x * PlayerSpeed)] === 0) {
                 player.position.x += player.currentInput.x * PlayerSpeed;
                 player.position.y += player.currentInput.y * PlayerSpeed;
             }
@@ -130,7 +130,7 @@ function randomizemap() {
 class player {
     constructor(name, socket) {
         this.Username = name;
-        this.position = { x: 0, y: 0 };
+        this.position = { x: 10, y: 10 };
         this.lobby = null;
         this.currentInput = { x: 0, y: 0};
         this.conection = socket;
