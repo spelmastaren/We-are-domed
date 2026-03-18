@@ -128,7 +128,6 @@ while isRunning:
             forwardMovmentX = dirx * 1
             forwardMovmentY = dirx * 1
             movebuttons += 1
-            movebuttons += 1
 
         if movebuttons != 0:
             serverhandler.updateMovmentInput(forwardMovmentX, forwardMovmentY)
