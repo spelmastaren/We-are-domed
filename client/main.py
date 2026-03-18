@@ -108,8 +108,10 @@ while isRunning:
                 y += sin
                 screenwidth = screen.get_width()
                 if Map[int(y)][int(x)] == 1:
+                    dist = n * 0.05 * math.cos(math.radians(i-30))
+                    Column_height = (screen.get_height() / (dist + 0.000001))/2
                     ## Writes the lines for the walls on screan
-                    pygame.draw.line(screen, (255-n, 255-n,255-n), (screen.get_width()//60*i, screen.get_height()//2+n), (screen.get_width()//60*i, screen.get_height()//2-n),screenwidth//60)
+                    pygame.draw.line(screen, (255-n, 255-n,255-n), (screen.get_width()//60*i, screen.get_height()//2+Column_height), (screen.get_width()//60*i, screen.get_height()//2-Column_height),screenwidth//60)
                     break
         ## Movment logic
         pressed = pygame.key.get_pressed()
@@ -119,14 +121,14 @@ while isRunning:
         if pressed[pygame.K_w]:
             dirx = math.cos(Rotation) * 1
             diry = math.sin(Rotation) * 1
-            forwardMovmentX = dirx * -1
-            forwardMovmentY = dirx * -1
+            forwardMovmentX = dirx * 1
+            forwardMovmentY = diry * 1
             movebuttons += 1
         elif pressed[pygame.K_s]:
             dirx = math.cos(Rotation) * 1
             diry = math.sin(Rotation) * 1
-            forwardMovmentX = dirx * 1
-            forwardMovmentY = dirx * 1
+            forwardMovmentX = dirx * -1
+            forwardMovmentY = diry * -1
             movebuttons += 1
 
         if movebuttons != 0:

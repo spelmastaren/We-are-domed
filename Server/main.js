@@ -1,7 +1,7 @@
 console.log("Server initialized");
 const ws = require("ws");
 const wss = new ws.Server({ port: 8080 });
-const PlayerSpeed = 0.01;
+const PlayerSpeed = 0.1;
 
 let playerjoinnumber = 1;
 let serverIDadding = 1;
