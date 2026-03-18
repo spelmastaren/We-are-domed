@@ -107,7 +107,7 @@ while isRunning:
                 x += cos
                 y += sin
                 screenwidth = screen.get_width()
-                if Map[int(x)][int(y)] == 1:
+                if Map[int(y)][int(x)] == 1:
                     ## Writes the lines for the walls on screan
                     pygame.draw.line(screen, (255-n, 255-n,255-n), (screen.get_width()//60*i, screen.get_height()//2+n), (screen.get_width()//60*i, screen.get_height()//2-n),screenwidth//60)
                     break
