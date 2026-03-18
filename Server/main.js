@@ -52,7 +52,7 @@ function createLobby() {
 
 
 
-function handelemessage(message,socket) {
+function handelemessage(self,message,socket) {
     console.log("Received message:", message);
     const messageJSON = JSON.parse(message);
     const player = players.get(socket);
