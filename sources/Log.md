@@ -22,3 +22,5 @@ Denna gång fick jag raycasting att funngera med något som jonathan kallar fish
 2026-03-11-Hemma
 Denna stund så lade jag till logick som gjorde att jag kunde röra mig gennom att tryck w och s. Server blev lagig av att jag gjorde detta. Det löste jag med bara sicka input från spelaren när den ändras. Om den inte har ändrats finns den redan på servern och behöver inte sickas igen. Det verkar vara någon kanstig sak som lite roterar mig medans jag går men det får jag lösa sedan.
 
+2026-03-18-Programeringslektionen
+Denna lektion hade jag stora probelm med att python inte gick att få fungerande. Det lyckades jag lösa. Sedan så tog jag bort fisheye effect med att ta cosinus av radianen av min ratoation gånger 0,005 och gånger n som är distansen som strålen som sickades är. Sedan var det ws som vart inverterade så fixade koden genom att bytta plats på minustecknena.
