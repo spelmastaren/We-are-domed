@@ -89,9 +89,9 @@ while isRunning:
         ## Loking around
         if event.type == pygame.KEYDOWN:
             if gamestate == 4:
-                if event.key == pygame.K_q:
+                if event.key == pygame.K_a:
                     Rotation -= math.pi/8
-                if event.key == pygame.K_e:
+                if event.key == pygame.K_d:
                     Rotation += math.pi/8
                 
     if gamestate == 4:

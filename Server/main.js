@@ -22,7 +22,7 @@ class lobby {
         // makes a list with all player names and positions
         let playerInfos = [];
         for (const player of this.players) {
-            if (self.map[Math.floor(player.position.y + player.currentInput.y * PlayerSpeed)][Math.floor(player.position.x + player.currentInput.x * PlayerSpeed)] === 0) {
+            if (self.map[self.map[Math.floor(player.position.y + player.currentInput.y * PlayerSpeed)]] && self.map[Math.floor(player.position.y + player.currentInput.y * PlayerSpeed)][Math.floor(player.position.x + player.currentInput.x * PlayerSpeed)] === 0) {
                 player.position.x += player.currentInput.x * PlayerSpeed;
                 player.position.y += player.currentInput.y * PlayerSpeed;
             }
