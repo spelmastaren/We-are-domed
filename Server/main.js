@@ -22,7 +22,7 @@ class lobby {
         // makes a list with all player names and positions
         let playerInfos = [];
         for (const player of this.players) {
-            //    if (self.map[self.map[Math.floor(player.position.y + player.currentInput.y * PlayerSpeed)]] && self.map[Math.floor(player.position.y + player.currentInput.y * PlayerSpeed)][Math.floor(player.position.x + player.currentInput.x * PlayerSpeed)] === 0) {
+            //    if (self.map && self.map[Math.floor(player.position.y + player.currentInput.y * PlayerSpeed)] != null && self.map[Math.floor(player.position.y + player.currentInput.y * PlayerSpeed)][Math.floor(player.position.x + player.currentInput.x * PlayerSpeed)] === 0) {
                 player.position.x += player.currentInput.x * PlayerSpeed;
                 player.position.y += player.currentInput.y * PlayerSpeed;
             //    }
@@ -55,6 +55,7 @@ function createLobby() {
 function handelemessage(self,message,socket) {
     console.log("Received message:", message);
     const messageJSON = JSON.parse(message);
+    console.log(messageJSON)
     const player = players.get(socket);
     //console.log("Parsed message:", messageJSON);
     // If client askes to create a lobby a new lobby is created and the player is added to it
