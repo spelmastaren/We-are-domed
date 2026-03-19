@@ -21,9 +21,9 @@ class lobby {
     GameUpdate() {
         // makes a list with all player names and positions
         let playerInfos = [];
-        console.log(self)
+        console.log(this)
         for (const player of this.players) {
-                if (self.map != null && self.map[Math.floor(player.position.y + player.currentInput.y * PlayerSpeed)] != null && self.map[Math.floor(player.position.y + player.currentInput.y * PlayerSpeed)][Math.floor(player.position.x + player.currentInput.x * PlayerSpeed)] === 0) {
+                if (this.map != null && this.map[Math.floor(player.position.y + player.currentInput.y * PlayerSpeed)] != null && this.map[Math.floor(player.position.y + player.currentInput.y * PlayerSpeed)][Math.floor(player.position.x + player.currentInput.x * PlayerSpeed)] === 0) {
                     player.position.x += player.currentInput.x * PlayerSpeed;
                     player.position.y += player.currentInput.y * PlayerSpeed;
                 }
