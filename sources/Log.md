@@ -24,3 +24,6 @@ Denna stund så lade jag till logick som gjorde att jag kunde röra mig gennom a
 
 2026-03-18-Programeringslektionen
 Denna lektion hade jag stora probelm med att python inte gick att få fungerande. Det lyckades jag lösa. Sedan så tog jag bort fisheye effect med att ta cosinus av radianen av min ratoation gånger 0,005 och gånger n som är distansen som strålen som sickades är. Sedan var det ws som vart inverterade så fixade koden genom att bytta plats på minustecknena.
+
+2026-03-18/19-EngelskaLektion/Hemma
+I dennna sektion så gjorde jag att man går in i en väg och stanar direckt. JAg hade väldigt mycket problem med detta när jag gjorde det tackvare att jag glömde att göra this istället för self i javascript. Eftersom du inte ska kunna fuska så kör all movment kod på servern. Jag har även ett anticheet på server som jag lade till för att man inte ska kunna fuska med input men detta lade jag till för ett par lektioner sedan. 
