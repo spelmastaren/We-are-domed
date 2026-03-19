@@ -22,10 +22,10 @@ class lobby {
         // makes a list with all player names and positions
         let playerInfos = [];
         for (const player of this.players) {
-            //    if (self.map && self.map[Math.floor(player.position.y + player.currentInput.y * PlayerSpeed)] != null && self.map[Math.floor(player.position.y + player.currentInput.y * PlayerSpeed)][Math.floor(player.position.x + player.currentInput.x * PlayerSpeed)] === 0) {
-                player.position.x += player.currentInput.x * PlayerSpeed;
-                player.position.y += player.currentInput.y * PlayerSpeed;
-            //    }
+                if (self.map && self.map[Math.floor(player.position.y + player.currentInput.y * PlayerSpeed)] != null && self.map[Math.floor(player.position.y + player.currentInput.y * PlayerSpeed)][Math.floor(player.position.x + player.currentInput.x * PlayerSpeed)] === 0) {
+                    player.position.x += player.currentInput.x * PlayerSpeed;
+                    player.position.y += player.currentInput.y * PlayerSpeed;
+                }
             playerInfos.push({
                 Username: player.Username,
                 Position: player.position
@@ -37,7 +37,7 @@ class lobby {
             if (player.conection.readyState === WebSocket.OPEN) {
                 player.conection.send(JSON.stringify({ type: "UpdateLocations", data: { players: playerInfos } }));
             } else {
-                console.log("Player connection Missed, removing player:", player.Username);
+                console.log("Player connection Missed", player.Username);
             }
         }
     }
@@ -52,7 +52,7 @@ function createLobby() {
 
 
 
-function handelemessage(self,message,socket) {
+function handelemessage(message,socket) {
     console.log("Received message:", message);
     const messageJSON = JSON.parse(message);
     console.log(messageJSON)
