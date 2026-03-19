@@ -18,10 +18,10 @@ class lobby {
         this.Interval = null;
     };
 
-    GameUpdate(self) {
+    GameUpdate() {
         // makes a list with all player names and positions
         let playerInfos = [];
-        console.log(self)
+        console.log(Self)
         for (const player of this.players) {
                 if (self.map != null && self.map[Math.floor(player.position.y + player.currentInput.y * PlayerSpeed)] != null && self.map[Math.floor(player.position.y + player.currentInput.y * PlayerSpeed)][Math.floor(player.position.x + player.currentInput.x * PlayerSpeed)] === 0) {
                     player.position.x += player.currentInput.x * PlayerSpeed;
@@ -100,7 +100,7 @@ function handelemessage(message,socket) {
                     player.conection.close();
                 }
             }
-            setInterval(lobby.GameUpdate.bind(lobby), 100);
+            setInterval(() => lobby.GameUpdate(), 100);
         }
     };
     if (messageJSON.type === "UpdateMovementInput") {
