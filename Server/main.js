@@ -18,7 +18,7 @@ class lobby {
         this.Interval = null;
     };
 
-    GameUpdate() {
+    GameUpdate(self) {
         // makes a list with all player names and positions
         let playerInfos = [];
         for (const player of this.players) {
