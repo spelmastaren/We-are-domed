@@ -9,6 +9,7 @@ import math
 gamestate = 0
 IsConnectedInLobby = False
 Rotation = 0
+ServerIP = "we-are-domed.onrender.com/"
 
 class ServerComnicationHandler():
     print("Server Communication Handler Initialized")
@@ -16,7 +17,8 @@ class ServerComnicationHandler():
         ConnectionAttemt = 0
         while ConnectionAttemt < 5:
             try:
-                self.connection = connect('wss://we-are-domed.onrender.com/')
+                print('wss://' + ServerIP)
+                self.connection = connect('wss://' + ServerIP)
                 self.username = json.loads(self.connection.recv())["data"]["username"]
                 print("Username received from server:", self.username)
                 self.LocalPlayerLocation = {"x": 5, "y": 5}
@@ -66,6 +68,26 @@ class ServerComnicationHandler():
                         break
                 print("Player locations updated:", self.Playerlocations)
                 
+class Button():
+    def __init__(self, x, y, width, height, text):
+        self.x = x
+        self.y = y
+        self.text = text
+        self.width = width
+        self.height = height
+
+
+    def draw(self, screen):
+        pygame.draw.rect(screen, (255, 0, 0), (self.x - 10, self.y - 10, 30, 30))
+        font = pygame.font.Font(None, 48)
+        text = font.render(self.text, True, (255, 255, 255))
+        screen.blit(text, (self.x + 5, self.y + 5))
+
+    def istotchingwithmouse(self,mousex,mousey):
+        print("")
+
+        
+
 
 
 

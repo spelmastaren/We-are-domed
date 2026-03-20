@@ -21,7 +21,6 @@ class lobby {
     GameUpdate() {
         // makes a list with all player names and positions
         let playerInfos = [];
-        console.log(this)
         for (const player of this.players) {
                 if (this.map != null && this.map[Math.floor(player.position.y + player.currentInput.y * PlayerSpeed)] != null && this.map[Math.floor(player.position.y + player.currentInput.y * PlayerSpeed)][Math.floor(player.position.x + player.currentInput.x * PlayerSpeed)] === 0) {
                     player.position.x += player.currentInput.x * PlayerSpeed;
@@ -54,9 +53,7 @@ function createLobby() {
 
 
 function handelemessage(message,socket) {
-    console.log("Received message:", message);
     const messageJSON = JSON.parse(message);
-    console.log(messageJSON)
     const player = players.get(socket);
     //console.log("Parsed message:", messageJSON);
     // If client askes to create a lobby a new lobby is created and the player is added to it
@@ -161,6 +158,19 @@ wss.on("connection", (socket) => {
     socket.on("message", (message) => handelemessage(message,socket));
     socket.on("close", () => {
         console.log("Client disconnected:", players.get(socket).Username);
+        player = players.get(socket)
+        if (player.lobby != null) {
+            lobby = player.lobby
+            lobby.players.remove(player)
+            if (lobby.players.size == 0) {
+                console.log("Lobby is empty, Deleating lobby ID " + lobby.ID)
+                if (lobby.Interval != null) {
+                    clearInterval(lobby.Interval)
+                    lobby.Interval = null
+                }
+                lobbys.delete(lobby.ID)
+            }
+        }
         players.delete(socket);
     });
 });
