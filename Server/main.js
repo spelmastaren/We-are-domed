@@ -161,9 +161,9 @@ wss.on("connection", (socket) => {
         player = players.get(socket)
         if (player.lobby != null) {
             lobby = player.lobby
-            lobby.players.remove(player)
+            lobby.players = lobby.players.filter((cplayer) => cplayer !== player);
             if (lobby.players.size == 0) {
-                console.log("Lobby is empty, Deleating lobby ID " + lobby.ID)
+                console.log("Lobby is empty, Deleating lobby with ID " + lobby.ID)
                 if (lobby.Interval != null) {
                     clearInterval(lobby.Interval)
                     lobby.Interval = null
