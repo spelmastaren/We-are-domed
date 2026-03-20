@@ -1,7 +1,7 @@
 console.log("Server initialized");
 const ws = require("ws");
 const wss = new ws.Server({ port: 8080 });
-const PlayerSpeed = 0.01;
+const PlayerSpeed = 0.05;
 
 let playerjoinnumber = 1;
 let serverIDadding = 1;
@@ -100,7 +100,7 @@ function handelemessage(message,socket) {
                     player.conection.close();
                 }
             }
-            setInterval(() => lobby.GameUpdate(), 10);
+            setInterval(() => lobby.GameUpdate(), 50);
         }
     };
     if (messageJSON.type === "UpdateMovementInput") {
