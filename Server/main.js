@@ -152,10 +152,10 @@ wss.on("connection", (socket) => {
     players.set(socket, new player("Player " + playerjoinnumber,socket));
     socket.send(JSON.stringify({ type: "Connection", data: { username: players.get(socket).Username } }));
     playerjoinnumber++;
-
-
     console.log("Assigned username:", players.get(socket).Username);
+
     socket.on("message", (message) => handelemessage(message,socket));
+
     socket.on("close", () => {
         console.log("Client disconnected:", players.get(socket).Username);
         player = players.get(socket)
