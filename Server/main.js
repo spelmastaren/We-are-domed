@@ -159,7 +159,6 @@ wss.on("connection", (socket) => {
     socket.on("close", () => {
         const player = players.get(socket)
         console.log("Client disconnected:", player.Username);
-        player = players.get(socket)
         if (player.lobby != null) {
             const lobby = player.lobby
             lobby.players = lobby.players.filter((cplayer) => cplayer !== player);
