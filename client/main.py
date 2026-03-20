@@ -68,23 +68,6 @@ class ServerComnicationHandler():
                         break
                 print("Player locations updated:", self.Playerlocations)
                 
-class Button():
-    def __init__(self, x, y, width, height, text):
-        self.x = x
-        self.y = y
-        self.text = text
-        self.width = width
-        self.height = height
-
-
-    def draw(self, screen):
-        pygame.draw.rect(screen, (255, 0, 0), (self.x - 10, self.y - 10, 30, 30))
-        font = pygame.font.Font(None, 48)
-        text = font.render(self.text, True, (255, 255, 255))
-        screen.blit(text, (self.x + 5, self.y + 5))
-
-    def istotchingwithmouse(self,mousex,mousey):
-        print("")
 
         
 
