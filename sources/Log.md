@@ -27,3 +27,6 @@ Denna lektion hade jag stora probelm med att python inte gick att få fungerande
 
 2026-03-18/19-EngelskaLektion/Hemma
 I dennna sektion så gjorde jag att man går in i en väg och stanar direckt. JAg hade väldigt mycket problem med detta när jag gjorde det tackvare att jag glömde att göra this istället för self i javascript. Eftersom du inte ska kunna fuska så kör all movment kod på servern. Jag har även ett anticheet på server som jag lade till för att man inte ska kunna fuska med input men detta lade jag till för ett par lektioner sedan. 
+
+2026-03-20-AI/Hemma
+I denna sektion så gjorde jag bättre och mjukare rörelse när man trycker a och d så rör jag mig på ett trevligt sätt runt och w och s går fram och bak på ett mjukare sätt. Jag har även uppdaterat servern så att den tar bort spelaren om de har kopplat bort. Om en lobby är tomm så stänger servern ner dens spelloop och tar bort den ur minnet.
