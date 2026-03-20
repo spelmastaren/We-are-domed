@@ -86,13 +86,6 @@ while isRunning:
         if event.type == pygame.QUIT:
             isRunning = False
             break
-        ## Loking around
-        if event.type == pygame.KEYDOWN:
-            if gamestate == 4:
-                if event.key == pygame.K_a:
-                    Rotation -= math.pi/8
-                if event.key == pygame.K_d:
-                    Rotation += math.pi/8
                 
     if gamestate == 4:
         ## Raycasting
@@ -135,6 +128,12 @@ while isRunning:
             serverhandler.updateMovmentInput(forwardMovmentX, forwardMovmentY)
         else:
             serverhandler.updateMovmentInput(0, 0)
+
+        ## Loking around logic 
+        if pressed[pygame.K_d]:
+            Rotation += math.pi/800
+        elif pressed[pygame.K_a]:
+            Rotation -= math.pi/800
 
     pygame.display.flip()
 
