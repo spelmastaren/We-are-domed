@@ -144,7 +144,7 @@ class enemy {
 
 wss.on("listening", () => {
     console.log("Server is sucsessfully started and redy to accept connections");
-    setInterval(() => KeepPlayersConnected(), 2000);
+    setInterval(() => KeepPlayersConnected(), 1000);
 });
 
 function KeepPlayersConnected() {
@@ -153,6 +153,7 @@ function KeepPlayersConnected() {
             player.conection.send(JSON.stringify({type: "PingUpdate", data:{}}));
         }
     });
+    console.log("Pinged players")
 }
 
 
