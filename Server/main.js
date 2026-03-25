@@ -144,7 +144,7 @@ class enemy {
 
 wss.on("listening", () => {
     console.log("Server is sucsessfully started and redy to accept connections");
-    setInterval(() => lobby.GameUpdate(), 2000);
+    setInterval(() => KeepPlayersConnected(), 2000);
 });
 
 function KeepPlayersConnected() {
