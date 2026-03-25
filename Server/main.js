@@ -153,7 +153,6 @@ function KeepPlayersConnected() {
             player.conection.send(JSON.stringify({type: "PingUpdate", data:{}}));
         }
     });
-    console.log("Pinged players")
 }
 
 
