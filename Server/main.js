@@ -144,7 +144,18 @@ class enemy {
 
 wss.on("listening", () => {
     console.log("Server is sucsessfully started and redy to accept connections");
+    setInterval(() => lobby.GameUpdate(), 2000);
 });
+
+function KeepPlayersConnected() {
+    players.forEach((player) => {
+        if (player.lobby === null || player.lobby.open) {
+            player.conection.send("Ping")
+        }
+    });
+}
+
+
 
 
 wss.on("connection", (socket) => {

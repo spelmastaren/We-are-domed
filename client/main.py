@@ -15,7 +15,7 @@ class ServerComnicationHandler():
     print("Server Communication Handler Initialized")
     def __init__(self):
         ConnectionAttemt = 0
-        while ConnectionAttemt < 5:
+        while ConnectionAttemt < 200:
             try:
                 print('wss://' + ServerIP)
                 self.connection = connect('wss://' + ServerIP)
@@ -27,6 +27,8 @@ class ServerComnicationHandler():
             except TimeoutError:
                 print("Connection attempt failed, retrying...")
                 ConnectionAttemt += 1
+        if self.connection == None:
+            Exception(TimeoutError) 
 
     def JoinLobbyWhitID(self,ID):
         self.connection.send(json.dumps({"type": "join", "data": {"lobby_id": ID}}))
@@ -84,7 +86,8 @@ isRunning = True
 serverhandler = ServerComnicationHandler()
 
 serverhandler.CreateLobby()
-ServerComnicationHandler.StartGame(serverhandler)
+
+##ServerComnicationHandler.StartGame(serverhandler)
 while isRunning:
 
     for event in pygame.event.get():
