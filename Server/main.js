@@ -150,7 +150,7 @@ wss.on("listening", () => {
 function KeepPlayersConnected() {
     players.forEach((player) => {
         if (player.lobby === null || player.lobby.open) {
-            player.send(JSON.stringify({type: "PingUpdate", data:{}}));
+            player.conection.send(JSON.stringify({type: "PingUpdate", data:{}}));
         }
     });
 }
