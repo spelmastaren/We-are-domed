@@ -68,7 +68,6 @@ class ServerComnicationHandler():
                     if player["Username"] == self.username:
                         self.LocalPlayerLocation = player["Position"]
                         break
-                print("Player locations updated:", self.Playerlocations)
                 
 
         
