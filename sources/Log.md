@@ -30,3 +30,6 @@ I dennna sektion så gjorde jag att man går in i en väg och stanar direckt. JA
 
 2026-03-20-AI/Hemma
 I denna sektion så gjorde jag bättre och mjukare rörelse när man trycker a och d så rör jag mig på ett trevligt sätt runt och w och s går fram och bak på ett mjukare sätt. Jag har även uppdaterat servern så att den tar bort spelaren om de har kopplat bort. Om en lobby är tomm så stänger servern ner dens spelloop och tar bort den ur minnet.
+
+2026-04-15-Programeringslektion
+På dennna lektion så skulle man göra ett qize på objektorenterad programering på det quizet så fick jag 13/15 rätt. Men det ska jag ta efter detta. På spelet idag har jag gjort det som jag har prokrastinerat mest av allt. Det är UI för serverar så man kan se vilka man kan joina och sitt andvändarnamn och starta spelet. Jag har börjat lite på det och gjort fungerande så att man kan se alla lobbys som var men ännu har jag inte hunnit göra en knapp som skapar en lobby. Sedan ska jag också göra ett system som kanske låter dig byta andvändarnamn och en skärm för en lobby som man är i som ej startat spelet ännu. På servern har jag nu gjort att istället för ett ping medelande så sickar servern viktig information som klienten behöver eller är bra att ha beroende på klientens situation så man både inte blir disconcted och kan få reda på infon uttan att sicka onödiga frågor.

@@ -109,7 +109,13 @@ while isRunning:
         screen.fill((255, 255, 0))
         screen.blit(pygame.font.SysFont("Arial", 30).render(f"Loged in as {serverhandler.username}", True, (0, 0, 0)), (30, 30))
         pygame.draw.rect(screen, (0, 255, 0), (0, 70, screen.get_width()//4 * 3, screen.get_height()-70))
-        
+        for i, lobby in enumerate(serverhandler.lobbys):
+            pygame.draw.rect(screen, (255, 0, 0), (0, 80 + i*20, screen.get_width()//4 * 3, 20))
+            screen.blit(pygame.font.SysFont("Arial", 12).render(lobby["ID"], True, (0, 0, 0)), (5, 80 + i*20))
+
+        pygame.draw.rect(screen, (0, 0, 255), (screen.get_width()//4 * 3, 70, screen.get_width()//4, (screen.get_height()-70) // 2))
+        pygame.draw.rect(screen, (255, 0, 255), (screen.get_width()//4 * 3, (screen.get_height()+70) // 2, screen.get_width()//4, (screen.get_height()-70) // 2))
+        screen.blit(pygame.font.SysFont("Arial", 30).render("Create Lobby", True, (0, 0, 0)), (screen.get_width()//4 * 3 + 10, screen.get_height()//2 + 30))
         pygame.display.flip()
 
     ## gamestate 4 is the game state the game is when you are connected and playing in a server            

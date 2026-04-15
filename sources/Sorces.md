@@ -9,3 +9,6 @@ https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects
 
 Raycasting tetorial
 https://www.youtube.com/watch?v=5xyeWBxmqzc&list=PLlYT7ZZOcBNA1hVBjkKFMnW0YDDODdy40
+
+Pygame Docs
+https://www.pygame.org/docs/
