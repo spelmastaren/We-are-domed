@@ -153,10 +153,12 @@ function KeepPlayersConnected() {
         if (player.lobby === null || player.lobby.open) {
             if (player.lobby === null) {
                 if (playerinfolobbys.length === 0) {
-                    lobbys.forEach((lobbys) => {
-                        playerinfolobbys.push({
-                            lobbyID: lobbys.ID
-                        });
+                    lobbys.forEach((lobby) => {
+                        if (lobby.open) {
+                            playerinfolobbys.push({
+                                lobbyID: lobby.ID
+                            });
+                        };
                     });
                 }
                 player.conection.send(JSON.stringify({type: "AvailebaleLobbys", data:{lobbys: playerinfolobbys}}));

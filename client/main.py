@@ -49,9 +49,12 @@ class ServerComnicationHandler():
     def HandleServerConnection(self):
         global gamestate
         global Rotation
+        self.lobbys = []
         while self.connection != None and isRunning:
             message = self.connection.recv()
             messageJSON = json.loads(message)
+            if gamestate == 1 and messageJSON["type"] == "AvailebaleLobbys":
+                self.lobbys = messageJSON["data"]["lobbys"]
             if gamestate == 3 and messageJSON["type"] == "GameStarted":
                 print("Game started with map:", messageJSON["data"]["map"])
                 self.map = messageJSON["data"]["map"]
