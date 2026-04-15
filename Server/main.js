@@ -148,9 +148,22 @@ wss.on("listening", () => {
 });
 
 function KeepPlayersConnected() {
+    let playerinfolobbys = [];
     players.forEach((player) => {
         if (player.lobby === null || player.lobby.open) {
-            player.conection.send(JSON.stringify({type: "PingUpdate", data:{}}));
+            if (player.lobby === null) {
+                if (playerinfolobbys.length === 0) {
+                    lobbys.forEach((lobbys) => {
+                        playerinfolobbys.push({
+                            lobbyID: lobbys.ID
+                        });
+                    });
+                }
+                player.conection.send(JSON.stringify({type: "AvailebaleLobbys", data:{lobbys: playerinfolobbys}}));
+            }
+            if (player.lobby != null) {
+                player.conection.send(JSON.stringify({ type: "LobbyInfo", data: { lobbyID: player.lobby.ID, Players: player.lobby.players } }));
+            }
         }
     });
 }

@@ -7,7 +7,6 @@ import math
 
 ## Setting game state to 0, which means that the game is in the start menu state. 
 gamestate = 0
-IsConnectedInLobby = False
 Rotation = 0
 ServerIP = "we-are-domed.onrender.com/"
 
@@ -29,15 +28,15 @@ class ServerComnicationHandler():
                 ConnectionAttemt += 1
         if self.connection == None:
             Exception(TimeoutError) 
+        
+        threading.Thread(target=self.HandleServerConnection).start()
 
     def JoinLobbyWhitID(self,ID):
         self.connection.send(json.dumps({"type": "join", "data": {"lobby_id": ID}}))
-        threading.Thread(target=self.HandleBingInLobby).start()
         
     def CreateLobby(self):
         print("Creating lobby...")
         self.connection.send(json.dumps({"type": "CreateLobby", "data": {}}))
-        threading.Thread(target=self.HandleBingInLobby).start()
 
     def StartGame(self):
         self.connection.send(json.dumps({"type": "StartGame", "data": {}}))
@@ -47,17 +46,15 @@ class ServerComnicationHandler():
             self.connection.send(json.dumps({"type": "UpdateMovementInput", "data": {"x": x, "y": y}}))
             self.CurentMovment = {"x": x,"y": y}
 
-    def HandleBingInLobby(self):
-        global IsConnectedInLobby
+    def HandleServerConnection(self):
+        global gamestate
         global Rotation
-        IsConnectedInLobby = True
-        while IsConnectedInLobby:
+        while self.connection != None and isRunning:
             message = self.connection.recv()
             messageJSON = json.loads(message)
-            if messageJSON["type"] == "GameStarted":
+            if gamestate == 3 and messageJSON["type"] == "GameStarted":
                 print("Game started with map:", messageJSON["data"]["map"])
                 self.map = messageJSON["data"]["map"]
-                global gamestate
                 gamestate = 4
                 Rotation = math.pi / 4
                 print("Starting game...")
@@ -80,11 +77,8 @@ class ServerComnicationHandler():
 pygame.init()
 screen = pygame.display.set_mode((500, 500), pygame.RESIZABLE)
 
+serverhandler = None
 isRunning = True
-
-serverhandler = ServerComnicationHandler()
-
-serverhandler.CreateLobby()
 
 ##ServerComnicationHandler.StartGame(serverhandler)
 while isRunning:
@@ -92,8 +86,30 @@ while isRunning:
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             isRunning = False
+            if serverhandler != None and serverhandler.connection != None:
+                serverhandler.connection.close()
+                print("Connection closed game exited")
             break
-                
+    
+    ## gamestate 1 Not Yet Connected to a server, but trying to connect.
+    if gamestate == 0:
+        screen.fill((0, 255, 0))
+        screen.blit(pygame.font.SysFont("Arial", 30).render("Connecting to server...", True, (0, 0, 0)), (screen.get_width() // 2 - 125, screen.get_height() // 2 - 15))
+        pygame.display.flip()
+        if serverhandler == None:
+            serverhandler = ServerComnicationHandler()
+        if serverhandler != None and serverhandler.connection != None:
+            gamestate = 1
+
+    ## Connected but not in a lobby or started game yet.
+    if gamestate == 1:
+        screen.fill((255, 255, 0))
+        screen.blit(pygame.font.SysFont("Arial", 30).render(f"Loged in as {serverhandler.username}", True, (0, 0, 0)), (30, 30))
+        pygame.draw.rect(screen, (0, 255, 0), (0, 70, screen.get_width()//4 * 3, screen.get_height()-70))
+        
+        pygame.display.flip()
+
+    ## gamestate 4 is the game state the game is when you are connected and playing in a server            
     if gamestate == 4:
         ## Raycasting
         screen.fill((0, 0, 255))
