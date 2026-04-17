@@ -13,6 +13,11 @@ ServerIP = "we-are-domed.onrender.com/"
 class ServerComnicationHandler():
     print("Server Communication Handler Initialized")
     def __init__(self):
+        self.Connected = False
+        self.connection = None
+        threading.Thread(target=self.ConnectToServer).start()
+
+    def ConnectToServer(self):
         ConnectionAttemt = 0
         while ConnectionAttemt < 200:
             try:
@@ -22,12 +27,15 @@ class ServerComnicationHandler():
                 print("Username received from server:", self.username)
                 self.LocalPlayerLocation = {"x": 5, "y": 5}
                 self.CurentMovment = {"x": 0, "y": 0}
+                self.Connected = True
                 break
-            except TimeoutError:
+            except Exception as e:
                 print("Connection attempt failed, retrying...")
                 ConnectionAttemt += 1
         if self.connection == None:
-            Exception(TimeoutError) 
+            print("Failed to connect to server after 200 attempts.")
+            global gamestate
+            gamestate = -1
         
         threading.Thread(target=self.HandleServerConnection).start()
 
@@ -52,6 +60,7 @@ class ServerComnicationHandler():
         self.lobbys = []
         while self.connection != None and isRunning:
             message = self.connection.recv()
+            print("Message received from server:", message)
             messageJSON = json.loads(message)
             if gamestate == 1 and messageJSON["type"] == "AvailebaleLobbys":
                 self.lobbys = messageJSON["data"]["lobbys"]
@@ -93,6 +102,12 @@ while isRunning:
                 serverhandler.connection.close()
                 print("Connection closed game exited")
             break
+        if event.type == pygame.MOUSEBUTTONDOWN:
+            mouse_pos = pygame.mouse.get_pos()
+            print("Mouse clicked at:", mouse_pos)
+            if screen.get_width()//4 * 3 < mouse_pos[0] < screen.get_width() and (screen.get_height()+70) // 2 < mouse_pos[1] < screen.get_height():
+                print("Create lobby button clicked")
+                serverhandler.CreateLobby()
     
     ## gamestate 1 Not Yet Connected to a server, but trying to connect.
     if gamestate == 0:
@@ -101,8 +116,14 @@ while isRunning:
         pygame.display.flip()
         if serverhandler == None:
             serverhandler = ServerComnicationHandler()
-        if serverhandler != None and serverhandler.connection != None:
+        if serverhandler.Connected:
             gamestate = 1
+
+    ## Connection Faild for some reason, could be server down or no internet connection.
+    if gamestate == -1:
+        screen.fill((255, 0, 0))
+        screen.blit(pygame.font.SysFont("Arial", 30).render("Failed to connect to server.", True, (0, 0, 0)), (screen.get_width() // 2 - 125, screen.get_height() // 2 - 15))
+        pygame.display.flip()
 
     ## Connected but not in a lobby or started game yet.
     if gamestate == 1:
@@ -115,7 +136,12 @@ while isRunning:
 
         pygame.draw.rect(screen, (0, 0, 255), (screen.get_width()//4 * 3, 70, screen.get_width()//4, (screen.get_height()-70) // 2))
         pygame.draw.rect(screen, (255, 0, 255), (screen.get_width()//4 * 3, (screen.get_height()+70) // 2, screen.get_width()//4, (screen.get_height()-70) // 2))
-        screen.blit(pygame.font.SysFont("Arial", 30).render("Create Lobby", True, (0, 0, 0)), (screen.get_width()//4 * 3 + 10, screen.get_height()//2 + 30))
+        text = pygame.font.SysFont("Arial", 30)
+        for i in range(30):
+            text = pygame.font.SysFont("Arial", 30-i)
+            if pygame.font.Font.size(text,"Create Lobby")[0] < screen.get_width()//4 - 20:
+                break
+        screen.blit(text.render("Create Lobby", True, (0, 0, 0)), (screen.get_width()//4 * 3 + 10, (screen.get_height()+70) // 2))
         pygame.display.flip()
 
     ## gamestate 4 is the game state the game is when you are connected and playing in a server            
