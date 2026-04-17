@@ -74,6 +74,7 @@ class ServerComnicationHandler():
             if gamestate == 3 and messageJSON["type"] == "LobbyInfo":
                 self.players = messageJSON["data"]["Players"]
                 self.lobbyID = messageJSON["data"]["lobbyID"]
+                print(self.players)
             if gamestate == 3 and messageJSON["type"] == "GameStarted":
                 print("Game started with map:", messageJSON["data"]["map"])
                 self.map = messageJSON["data"]["map"]
@@ -169,7 +170,7 @@ while isRunning:
     if gamestate == 3:
         screen.fill((255, 0, 255))
         for i, player in enumerate(serverhandler.players):
-            screen.blit(pygame.font.SysFont("Arial", 12).render(str(player["Username"]), True, (0, 0, 0)), (5, 80 + i*20))
+            screen.blit(pygame.font.SysFont("Arial", 12).render(player["Username"], True, (0, 0, 0)), (5, 80 + i*20))
         pygame.display.flip()
 
     ## gamestate 4 is the game state the game is when you are connected and playing in a server            
