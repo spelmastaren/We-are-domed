@@ -67,7 +67,7 @@ function handelemessage(message,socket) {
         lobby.players.push(player);
         player.lobby = lobby;
         console.log("Lobby created with ID:", lobby.ID);
-        player.conection.send(JSON.stringify({type: "LobbyInfo", data: {lobbyID: player.lobby.ID, Players: Players}}));
+        player.conection.send(JSON.stringify({ type: "LobbyCreated", data: { lobbyID: lobby.ID, success: true } }));
     }; 
     if (messageJSON.type === "JoinLobby") {
         if (player.lobby != null) {
@@ -86,7 +86,7 @@ function handelemessage(message,socket) {
         lobby.players.push(player);
         player.lobby = lobby;
         console.log("Player", player.Username, "joined lobby with ID:", lobby.ID);
-        player.conection.send(JSON.stringify({type: "LobbyInfo", data: {lobbyID: player.lobby.ID, Players: Players}}));
+        player.conection.send(JSON.stringify({ type: "LobbyJoined", data: { lobbyID: lobby.ID, success: true } }));
     }
     if (messageJSON.type === "StartGame") {
         const lobby = player.lobby;
@@ -175,7 +175,7 @@ function KeepPlayersConnected() {
                         Username: player.Username
                     });
                 });
-                player.conection.send(JSON.stringify({type: "LobbyInfo", data: {lobbyID: player.lobby.ID, Players: Players}}));
+                player.conection.send(JSON.stringify({type: "LobbyInfo", data: {lobbyID: player.lobby.ID, Players: players}}));
             }
         }
     });
