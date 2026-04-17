@@ -71,10 +71,10 @@ class ServerComnicationHandler():
                 print("Error from server:", messageJSON["data"]["message"])
             if gamestate == 1 and messageJSON["type"] == "AvailebaleLobbys":
                 self.lobbys = messageJSON["data"]["lobbys"]
-            if gamestate == 3 and messageJSON["type"] == "LobbyInfo":
+            if messageJSON["type"] == "LobbyInfo":
                 self.players = messageJSON["data"]["Players"]
                 self.lobbyID = messageJSON["data"]["lobbyID"]
-                print(self.players)
+                gamestate = 3
             if gamestate == 3 and messageJSON["type"] == "GameStarted":
                 print("Game started with map:", messageJSON["data"]["map"])
                 self.map = messageJSON["data"]["map"]
@@ -114,22 +114,26 @@ while isRunning:
                 break
         if event.type == pygame.MOUSEBUTTONDOWN:
             mouse_pos = pygame.mouse.get_pos()
-            print("Mouse clicked at:", mouse_pos)
+            if gamestate != 4:
+                print("Mouse clicked at:", mouse_pos)
             if gamestate == -1:
                 break
             if gamestate == 1:
                 if screen.get_width()//4 * 3 < mouse_pos[0] < screen.get_width() and (screen.get_height()+70) // 2 < mouse_pos[1] < screen.get_height():
-                    gamestate = 3
                     print("Create lobby button clicked")
                     serverhandler.CreateLobby()
-                    gamestate = 3
                 
                 for i, lobby in enumerate(serverhandler.lobbys):
-                    if 0 < mouse_pos[0] < screen.get_width()//4 * 3 and 80 + i*20 < mouse_pos[1] < 100 + i*20:
+                    if 0 < mouse_pos[0] < screen.get_width()//4 * 3 and 80 + i*40 < mouse_pos[1] < 100 + i*40:
                         print(f"Lobby {lobby['lobbyID']} clicked")
                         serverhandler.JoinLobbyWhitID(lobby["lobbyID"])
-                        gamestate = 3
                         break
+            if gamestate == 3:
+                if 0 < mouse_pos[0] < screen.get_width()//2 and screen.get_height() - 40 < mouse_pos[1] < screen.get_height():
+                    print("Start game button clicked")
+                    serverhandler.StartGame()
+                if screen.get_width()//2 < mouse_pos[0] < screen.get_width() and screen.get_height() - 40 < mouse_pos[1] < screen.get_height():
+                    print("Leave lobby button clicked")
     
     ## gamestate 1 Not Yet Connected to a server, but trying to connect.
     if gamestate == 0:
@@ -153,8 +157,8 @@ while isRunning:
         screen.blit(pygame.font.SysFont("Arial", 30).render(f"Loged in as {serverhandler.username}", True, (0, 0, 0)), (30, 30))
         pygame.draw.rect(screen, (0, 255, 0), (0, 70, screen.get_width()//4 * 3, screen.get_height()-70))
         for i, lobby in enumerate(serverhandler.lobbys):
-            pygame.draw.rect(screen, (255, 0, 0), (0, 80 + i*20, screen.get_width()//4 * 3, 20))
-            screen.blit(pygame.font.SysFont("Arial", 12).render(str(lobby["lobbyID"]), True, (0, 0, 0)), (5, 80 + i*20))
+            pygame.draw.rect(screen, (255, 0, 0), (0, 80 + i*40, screen.get_width()//4 * 3, 40))
+            screen.blit(pygame.font.SysFont("Arial", 30).render(str(lobby["lobbyID"]), True, (0, 0, 0)), (5, 80 + i*20))
 
         pygame.draw.rect(screen, (0, 0, 255), (screen.get_width()//4 * 3, 70, screen.get_width()//4, (screen.get_height()-70) // 2))
         pygame.draw.rect(screen, (255, 0, 255), (screen.get_width()//4 * 3, (screen.get_height()+70) // 2, screen.get_width()//4, (screen.get_height()-70) // 2))
@@ -168,9 +172,18 @@ while isRunning:
 
     ## gamestate 3 is the game state when you are in a lobby waiting for the game to start.
     if gamestate == 3:
-        screen.fill((255, 0, 255))
+        screen.fill((0, 0, 255))
+        screen.blit(pygame.font.SysFont("Arial", 30).render(f"Joined lobby: {serverhandler.lobbyID}", True, (0, 0, 0)), (5, 0))
         for i, player in enumerate(serverhandler.players):
-            screen.blit(pygame.font.SysFont("Arial", 12).render(player["Username"], True, (0, 0, 0)), (5, 80 + i*20))
+            if player["Username"] == serverhandler.username:
+                pygame.draw.rect(screen, (255, 215, 0), (0, 80 + i*40, screen.get_width(), 40))
+            else:
+                pygame.draw.rect(screen, (255, 0, 0), (0, 80 + i*40, screen.get_width(), 40))
+            screen.blit(pygame.font.SysFont("Arial", 30).render(player["Username"], True, (0, 0, 0)), (5, 80 + i*40))
+        pygame.draw.rect(screen, (0, 255, 0), (0, screen.get_height() - 40, screen.get_width()//2, 40))
+        screen.blit(pygame.font.SysFont("Arial", 30).render("Start Game", True, (0, 0, 0)), (5, screen.get_height() - 35))
+        pygame.draw.rect(screen, (255, 0, 0), (screen.get_width()//2, screen.get_height() - 40, screen.get_width()//2, 40))
+        screen.blit(pygame.font.SysFont("Arial", 30).render("Leave Lobby", True, (0, 0, 0)), (screen.get_width()//2 + 10, screen.get_height() - 35))
         pygame.display.flip()
 
     ## gamestate 4 is the game state the game is when you are connected and playing in a server            
