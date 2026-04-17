@@ -58,31 +58,36 @@ function handelemessage(message,socket) {
     //console.log("Parsed message:", messageJSON);
     // If client askes to create a lobby a new lobby is created and the player is added to it
     if (messageJSON.type === "CreateLobby") {
+        if (player.lobby != null) {
+            socket.send(JSON.stringify({ type: "error", data: { message: "Player is already in a lobby" } }));
+            return;
+        };
         // creates a new lobby and adds the player to it
         let lobby = createLobby();
         lobby.players.push(player);
         player.lobby = lobby;
         console.log("Lobby created with ID:", lobby.ID);
         socket.send(JSON.stringify({ type: "LobbyCreated", data: { lobbyID: lobby.ID, success: true } }));
-    };
-    // If client askes for all players in a lobby thay gets the username and if its them self or not
-    if (messageJSON.type === "ShowPlayersInLobby") {
-        const lobby = player.lobby;
-        if (lobby == null) {
-            socket.send(JSON.stringify({ type: "error", data: { message: "Player is not in a lobby" } }));
+    }; 
+    if (messageJSON.type === "JoinLobby") {
+        if (player.lobby != null) {
+            socket.send(JSON.stringify({ type: "error", data: { message: "Player is already in a lobby" } }));
             return;
-        } else {
-            let PlayerInfos = [];
-            lobby.players.forEach(player => {
-                PlayerInfos.push({
-                    Username: player.Username,
-                    ThisIsYou: player === players.get(socket)
-                });
-            });
-            lobby.Interval = setInterval(() => lobby.GameUpdate(), 1);
-            socket.send(JSON.stringify({ type: "PlayersInLobby", data: { players:  PlayerInfos} }));
         }
-    };    
+        const lobby = lobbys.get(messageJSON.data["lobby_id"]);
+        if (lobby == null) {
+            socket.send(JSON.stringify({ type: "error", data: {message: "Lobby not found"}}));
+            return;
+        }
+        if (!lobby.open) {
+            socket.send(JSON.stringify({ type: "error", data: {message: "Lobby is closed"} }));
+            return;
+        }
+        lobby.players.push(player);
+        player.lobby = lobby;
+        console.log("Player", player.Username, "joined lobby with ID:", lobby.ID);
+        player.conection.send(JSON.stringify({ type: "LobbyJoined", data: { lobbyID: lobby.ID, success: true } }));
+    }
     if (messageJSON.type === "StartGame") {
         const lobby = player.lobby;
         if (lobby == null) {

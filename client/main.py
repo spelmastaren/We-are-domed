@@ -15,11 +15,12 @@ class ServerComnicationHandler():
     def __init__(self):
         self.Connected = False
         self.connection = None
+        self.LeaveServer = False
         threading.Thread(target=self.ConnectToServer).start()
 
     def ConnectToServer(self):
         ConnectionAttemt = 0
-        while ConnectionAttemt < 200:
+        while ConnectionAttemt < 200 and self.LeaveServer == False:
             try:
                 self.connection = connect('wss://' + ServerIP)
                 self.username = json.loads(self.connection.recv())["data"]["username"]
@@ -37,7 +38,7 @@ class ServerComnicationHandler():
         threading.Thread(target=self.HandleServerConnection).start()
 
     def JoinLobbyWhitID(self,ID):
-        self.connection.send(json.dumps({"type": "join", "data": {"lobby_id": ID}}))
+        self.connection.send(json.dumps({"type": "JoinLobby", "data": {"lobby_id": ID}}))
         
     def CreateLobby(self):
         print("Creating lobby...")
@@ -45,6 +46,9 @@ class ServerComnicationHandler():
 
     def StartGame(self):
         self.connection.send(json.dumps({"type": "StartGame", "data": {}}))
+    
+    def Disconnect(self):
+        self.LeaveServer = True
 
     def updateMovmentInput(self, x, y):
         if self.CurentMovment != {"x": x, "y": y}:
@@ -55,11 +59,21 @@ class ServerComnicationHandler():
         global gamestate
         global Rotation
         self.lobbys = []
+        self.players = []
+        self.lobbyID = None
         while self.connection != None and isRunning:
             message = self.connection.recv()
             messageJSON = json.loads(message)
+            if self.LeaveServer:
+                self.connection.close()
+                break
+            if messageJSON["type"] == "error":
+                print("Error from server:", messageJSON["data"]["message"])
             if gamestate == 1 and messageJSON["type"] == "AvailebaleLobbys":
                 self.lobbys = messageJSON["data"]["lobbys"]
+            if gamestate == 3 and messageJSON["type"] == "LobbyInfo":
+                self.players = messageJSON["data"]["Players"]
+                self.lobbyID = messageJSON["data"]["lobbyID"]
             if gamestate == 3 and messageJSON["type"] == "GameStarted":
                 print("Game started with map:", messageJSON["data"]["map"])
                 self.map = messageJSON["data"]["map"]
@@ -94,17 +108,27 @@ while isRunning:
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             isRunning = False
-            if serverhandler != None and serverhandler.connection != None:
-                serverhandler.connection.close()
-                print("Connection closed game exited")
-            break
+            if serverhandler != None:
+                serverhandler.Disconnect()
+                break
         if event.type == pygame.MOUSEBUTTONDOWN:
             mouse_pos = pygame.mouse.get_pos()
             print("Mouse clicked at:", mouse_pos)
-            if screen.get_width()//4 * 3 < mouse_pos[0] < screen.get_width() and (screen.get_height()+70) // 2 < mouse_pos[1] < screen.get_height():
-                gamestate = 3
-                print("Create lobby button clicked")
-                serverhandler.CreateLobby()
+            if gamestate == -1:
+                break
+            if gamestate == 1:
+                if screen.get_width()//4 * 3 < mouse_pos[0] < screen.get_width() and (screen.get_height()+70) // 2 < mouse_pos[1] < screen.get_height():
+                    gamestate = 3
+                    print("Create lobby button clicked")
+                    serverhandler.CreateLobby()
+                    gamestate = 3
+                
+                for i, lobby in enumerate(serverhandler.lobbys):
+                    if 0 < mouse_pos[0] < screen.get_width()//4 * 3 and 80 + i*20 < mouse_pos[1] < 100 + i*20:
+                        print(f"Lobby {lobby['lobbyID']} clicked")
+                        serverhandler.JoinLobbyWhitID(lobby["lobbyID"])
+                        gamestate = 3
+                        break
     
     ## gamestate 1 Not Yet Connected to a server, but trying to connect.
     if gamestate == 0:
@@ -139,6 +163,13 @@ while isRunning:
             if pygame.font.Font.size(text,"Create Lobby")[0] < screen.get_width()//4 - 20:
                 break
         screen.blit(text.render("Create Lobby", True, (0, 0, 0)), (screen.get_width()//4 * 3 + 10, (screen.get_height()+70) // 2))
+        pygame.display.flip()
+
+    ## gamestate 3 is the game state when you are in a lobby waiting for the game to start.
+    if gamestate == 3:
+        screen.fill((255, 0, 255))
+        for i, player in enumerate(serverhandler.players):
+            screen.blit(pygame.font.SysFont("Arial", 12).render(str(player["Username"]), True, (0, 0, 0)), (5, 80 + i*20))
         pygame.display.flip()
 
     ## gamestate 4 is the game state the game is when you are connected and playing in a server            
