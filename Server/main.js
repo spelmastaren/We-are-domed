@@ -164,7 +164,13 @@ function KeepPlayersConnected() {
                 player.conection.send(JSON.stringify({type: "AvailebaleLobbys", data:{lobbys: playerinfolobbys}}));
             }
             if (player.lobby != null) {
-                player.conection.send(JSON.stringify({type: "LobbyInfo", data: {lobbyID: player.lobby.ID, Players: player.lobby.players} }));
+                Players = [];
+                player.lobby.players.forEach(player => {
+                    Players.push({
+                        Username: player.Username
+                    });
+                });
+                player.conection.send(JSON.stringify({type: "LobbyInfo", data: {lobbyID: player.lobby.ID, Players: players}}));
             }
         }
     });
