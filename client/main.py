@@ -21,7 +21,6 @@ class ServerComnicationHandler():
         ConnectionAttemt = 0
         while ConnectionAttemt < 200:
             try:
-                print('wss://' + ServerIP)
                 self.connection = connect('wss://' + ServerIP)
                 self.username = json.loads(self.connection.recv())["data"]["username"]
                 print("Username received from server:", self.username)
@@ -30,10 +29,8 @@ class ServerComnicationHandler():
                 self.Connected = True
                 break
             except Exception as e:
-                print("Connection attempt failed, retrying...")
                 ConnectionAttemt += 1
         if self.connection == None:
-            print("Failed to connect to server after 200 attempts.")
             global gamestate
             gamestate = -1
         
@@ -60,7 +57,6 @@ class ServerComnicationHandler():
         self.lobbys = []
         while self.connection != None and isRunning:
             message = self.connection.recv()
-            print("Message received from server:", message)
             messageJSON = json.loads(message)
             if gamestate == 1 and messageJSON["type"] == "AvailebaleLobbys":
                 self.lobbys = messageJSON["data"]["lobbys"]
@@ -106,6 +102,7 @@ while isRunning:
             mouse_pos = pygame.mouse.get_pos()
             print("Mouse clicked at:", mouse_pos)
             if screen.get_width()//4 * 3 < mouse_pos[0] < screen.get_width() and (screen.get_height()+70) // 2 < mouse_pos[1] < screen.get_height():
+                gamestate = 3
                 print("Create lobby button clicked")
                 serverhandler.CreateLobby()
     
@@ -132,7 +129,7 @@ while isRunning:
         pygame.draw.rect(screen, (0, 255, 0), (0, 70, screen.get_width()//4 * 3, screen.get_height()-70))
         for i, lobby in enumerate(serverhandler.lobbys):
             pygame.draw.rect(screen, (255, 0, 0), (0, 80 + i*20, screen.get_width()//4 * 3, 20))
-            screen.blit(pygame.font.SysFont("Arial", 12).render(lobby["ID"], True, (0, 0, 0)), (5, 80 + i*20))
+            screen.blit(pygame.font.SysFont("Arial", 12).render(str(lobby["lobbyID"]), True, (0, 0, 0)), (5, 80 + i*20))
 
         pygame.draw.rect(screen, (0, 0, 255), (screen.get_width()//4 * 3, 70, screen.get_width()//4, (screen.get_height()-70) // 2))
         pygame.draw.rect(screen, (255, 0, 255), (screen.get_width()//4 * 3, (screen.get_height()+70) // 2, screen.get_width()//4, (screen.get_height()-70) // 2))
