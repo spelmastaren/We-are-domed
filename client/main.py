@@ -60,6 +60,7 @@ class ServerComnicationHandler():
         global Rotation
         self.lobbys = []
         self.players = []
+        self.Playerlocations = []
         self.lobbyID = None
         while self.connection != None and isRunning:
             message = self.connection.recv()
@@ -83,8 +84,8 @@ class ServerComnicationHandler():
                 print("Starting game...")
                 self.LocalPlayerLocation = {"x": 10.0, "y": 10.0}
             if gamestate == 4 and messageJSON["type"] == "UpdateLocations":
-                self.Playerlocations = messageJSON["data"]
-                for player in self.Playerlocations["players"]:
+                self.Playerlocations = messageJSON["data"]["players"]
+                for player in self.Playerlocations:
                     if player["Username"] == self.username:
                         self.LocalPlayerLocation = player["Position"]
                         break
@@ -206,6 +207,8 @@ while isRunning:
                     ## Writes the lines for the walls on screan
                     pygame.draw.line(screen, (255-n, 255-n,255-n), (screen.get_width()//60*i, screen.get_height()//2+Column_height), (screen.get_width()//60*i, screen.get_height()//2-Column_height),screenwidth//60)
                     break
+                
+
         ## Movment logic
         pressed = pygame.key.get_pressed()
         movebuttons = 0
