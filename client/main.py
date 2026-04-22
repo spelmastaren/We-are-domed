@@ -206,7 +206,7 @@ while isRunning:
                 ## Added player detection, if a player is in sight it will add it to the player_in_sight list with the distance to the player.
                 for player in serverhandler.Playerlocations:
                     if player["Username"] != serverhandler.username and int(player["Position"]["x"]*30) == int(x*30) and int(player["Position"]["y"]*30) == int(y*30):
-                        player_in_sight.append({"Player": player, "dist": n * 0.05 * math.cos(math.radians(i-30))})
+                        player_in_sight.append({"Player": player, "dist": n * 0.05 * math.cos(math.radians(i-30)), "raytravle": n})
 
 
                 screenwidth = screen.get_width()
@@ -227,8 +227,8 @@ while isRunning:
                 y_floor = screen.get_height() // 2 + Column_height
                 y_body_top = y_floor - (Column_height * 2 * player_body_scale)
                 y_head_top = y_body_top - (Column_height * player_head_scale)
-                pygame.draw.line(screen, (0, max(0,int(155-dist)), max(0,int(213-dist))), (screen.get_width() // 60 * i, y_floor), (screen.get_width() // 60 * i, y_body_top), screenwidth // 60)
-                pygame.draw.line(screen, (max(0,int(255 - dist)), 0, 0), (screen.get_width() // 60 * i, y_body_top+1), (screen.get_width() // 60 * i, y_head_top), screenwidth // 60)
+                pygame.draw.line(screen, (0, max(0,int(155-playerInfo["raytravle"])), max(0,int(213-playerInfo["raytravle"]))), (screen.get_width() // 60 * i, y_floor), (screen.get_width() // 60 * i, y_body_top), screenwidth // 60)
+                pygame.draw.line(screen, (max(0,int(255 - playerInfo["raytravle"])), 0, 0), (screen.get_width() // 60 * i, y_body_top+1), (screen.get_width() // 60 * i, y_head_top), screenwidth // 60)
                  
                 break
                     
