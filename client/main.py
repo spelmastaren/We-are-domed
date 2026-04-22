@@ -70,20 +70,21 @@ class ServerComnicationHandler():
                 break
             if messageJSON["type"] == "error":
                 print("Error from server:", messageJSON["data"]["message"])
-            if gamestate == 1 and messageJSON["type"] == "AvailebaleLobbys":
+            if messageJSON["type"] == "AvailebaleLobbys":
                 self.lobbys = messageJSON["data"]["lobbys"]
+                gamestate = 1
             if messageJSON["type"] == "LobbyInfo":
                 self.players = messageJSON["data"]["Players"]
                 self.lobbyID = messageJSON["data"]["lobbyID"]
                 gamestate = 3
-            if gamestate == 3 and messageJSON["type"] == "GameStarted":
-                print("Game started with map:", messageJSON["data"]["map"])
+            if messageJSON["type"] == "GameStarted":
                 self.map = messageJSON["data"]["map"]
                 gamestate = 4
                 Rotation = math.pi / 4
                 print("Starting game...")
                 self.LocalPlayerLocation = {"x": 10.0, "y": 10.0}
-            if gamestate == 4 and messageJSON["type"] == "UpdateLocations":
+            if messageJSON["type"] == "UpdateLocations":
+                gamestate = 4
                 self.Playerlocations = messageJSON["data"]["players"]
                 for player in self.Playerlocations:
                     if player["Username"] == self.username:
@@ -197,17 +198,40 @@ while isRunning:
             rot_i = Rotation + math.radians(i-30)
             sin = 0.01 * math.sin(rot_i)
             cos = 0.01 * math.cos(rot_i)
-            for n in range(200):
+            player_in_sight = []
+            for n in range(1000):
                 x += cos
                 y += sin
+
+                ## Added player detection, if a player is in sight it will add it to the player_in_sight list with the distance to the player.
+                for player in serverhandler.Playerlocations:
+                    if player["Username"] != serverhandler.username and int(player["Position"]["x"]*30) == int(x*30) and int(player["Position"]["y"]*30) == int(y*30):
+                        player_in_sight.append({"Player": player, "dist": n * 0.05 * math.cos(math.radians(i-30))})
+
+
                 screenwidth = screen.get_width()
                 if Map[int(y)][int(x)] == 1:
                     dist = n * 0.05 * math.cos(math.radians(i-30))
                     Column_height = (screen.get_height() / (dist + 0.000001))/2
                     ## Writes the lines for the walls on screan
-                    pygame.draw.line(screen, (255-n, 255-n,255-n), (screen.get_width()//60*i, screen.get_height()//2+Column_height), (screen.get_width()//60*i, screen.get_height()//2-Column_height),screenwidth//60)
+                    pygame.draw.line(screen, (max(0, int(255-n)), max(0,int(255-n)),max(0,int(255-n))), (screen.get_width()//60*i, screen.get_height()//2+Column_height), (screen.get_width()//60*i, screen.get_height()//2-Column_height),screenwidth//60)
                     break
-                
+
+            ## renders players in sight, the distance is used to make the player smaller the further away they are, and also to make them darker the further away they are.
+            ## renders players in sight
+            for playerInfo in player_in_sight:
+                dist = playerInfo["dist"]
+                Column_height = (screen.get_height() / (dist + 0.000001)) / 2
+                player_body_scale = 0.4
+                player_head_scale = 0.3
+                y_floor = screen.get_height() // 2 + Column_height
+                y_body_top = y_floor - (Column_height * 2 * player_body_scale)
+                y_head_top = y_body_top - (Column_height * player_head_scale)
+                pygame.draw.line(screen, (0, max(0,int(155-dist)), max(0,int(213-dist))), (screen.get_width() // 60 * i, y_floor), (screen.get_width() // 60 * i, y_body_top), screenwidth // 60)
+                pygame.draw.line(screen, (max(0,int(255 - dist)), 0, 0), (screen.get_width() // 60 * i, y_body_top+1), (screen.get_width() // 60 * i, y_head_top), screenwidth // 60)
+                 
+                break
+                    
 
         ## Movment logic
         pressed = pygame.key.get_pressed()
