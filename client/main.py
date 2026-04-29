@@ -252,7 +252,6 @@ while isRunning:
             movebuttons += 1
 
         if movebuttons != 0:
-            print(f"Moving with input: {forwardMovmentX * forwardMovmentY}")
             serverhandler.updateMovmentInput(forwardMovmentX, forwardMovmentY)
         else:
             serverhandler.updateMovmentInput(0, 0)
