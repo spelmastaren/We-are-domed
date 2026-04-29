@@ -117,17 +117,27 @@ function handelemessage(message,socket) {
 
 function randomizemap() {
     const map = [];
+    
+
     for (let i = 0; i < 100; i++) {
         const row = [];
+        higestgoalscore = 0;
+        let goalpos = { x: 0, y: 0 };
         for (let j = 0; j < 100; j++) {
             if (i === 0 || i === 99 || j === 0 || j === 99) {
                 row.push(1); // Border walls
+                const goalscore = Math.random()
+                if (i !== j && goalscore > higestgoalscore) {
+                    higestgoalscore = goalscore
+                    goalpos = { x: j, y: i }
+                }
             } else {
                 row.push(Math.random() < 0.4 ? 1 : 0); // 40% chance of being a wall
             }
         };
         map.push(row);
     };
+    map[goalpos.y][goalpos.x] = 2; // Place the goal    
     return map;
 };
 
