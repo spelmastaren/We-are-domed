@@ -4,6 +4,7 @@ import websockets
 from websockets.sync.client import connect
 import json
 import math
+import time
 
 ## Setting game state to 0, which means that the game is in the start menu state. 
 gamestate = 0
@@ -63,6 +64,7 @@ class ServerComnicationHandler():
         self.Playerlocations = []
         self.lobbyID = None
         self.canStartGame = False
+        self.Screnachanching = 0
         while self.connection != None and isRunning:
             message = self.connection.recv()
             messageJSON = json.loads(message)
@@ -93,8 +95,10 @@ class ServerComnicationHandler():
                         self.LocalPlayerLocation = player["Position"]
                         break
             if messageJSON["type"] == "Winner":
+                self.Screnachanching = time.time() + 10
                 gamestate = 5
                 print("Player won the game!")
+
 
 
 
@@ -183,8 +187,13 @@ while isRunning:
             else:
                 pygame.draw.rect(screen, (255, 0, 0), (0, 80 + i*40, screen.get_width(), 40))
             screen.blit(pygame.font.SysFont("Arial", 30).render(player["Username"], True, (0, 0, 0)), (5, 80 + i*40))
-        pygame.draw.rect(screen, (0, 255, 0), (0, screen.get_height() - 40, screen.get_width()//2, 40))
-        screen.blit(pygame.font.SysFont("Arial", 30).render("Start Game", True, (0, 0, 0)), (5, screen.get_height() - 35))
+        if serverhandler.canStartGame:    
+            pygame.draw.rect(screen, (0, 255, 0), (0, screen.get_height() - 40, screen.get_width()//2, 40))
+            screen.blit(pygame.font.SysFont("Arial", 30).render("Start Game", True, (0, 0, 0)), (5, screen.get_height() - 35))
+        else:
+            pygame.draw.rect(screen, (0, 200, 0), (0, screen.get_height() - 40, screen.get_width()//2, 40))
+            screen.blit(pygame.font.SysFont("Arial", 30).render("Game is running", True, (0, 0, 0)), (5, screen.get_height() - 35))
+        
         pygame.draw.rect(screen, (255, 0, 0), (screen.get_width()//2, screen.get_height() - 40, screen.get_width()//2, 40))
         screen.blit(pygame.font.SysFont("Arial", 30).render("Leave Lobby", True, (0, 0, 0)), (screen.get_width()//2 + 10, screen.get_height() - 35))
         pygame.display.flip()
@@ -273,6 +282,10 @@ while isRunning:
             screen.fill((0, 255, 0))
             screen.blit(pygame.font.SysFont("Arial", 30).render("You won Congratelations you are one of few", True, (0, 0, 0)), (screen.get_width() // 2 - 125, screen.get_height() // 2 - 15))
             pygame.display.flip()
+            if time.time() > serverhandler.Screnachanching:
+                gamestate = 3
+                Rotation = 0
+                serverhandler.Screnachanching = 0
         ## gamestate -5 is the lose screen, you get dommed and die if die in any way
         if gamestate == -5:
             screen.fill((255, 0, 0))
