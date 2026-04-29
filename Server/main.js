@@ -118,11 +118,10 @@ function handelemessage(message,socket) {
 function randomizemap() {
     const map = [];
     
-
+    let goalpos = { x: 0, y: 0 };
     for (let i = 0; i < 100; i++) {
         const row = [];
         higestgoalscore = 0;
-        let goalpos = { x: 0, y: 0 };
         for (let j = 0; j < 100; j++) {
             if (i === 0 || i === 99 || j === 0 || j === 99) {
                 row.push(1); // Border walls
