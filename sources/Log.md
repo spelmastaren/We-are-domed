@@ -39,3 +39,6 @@ Denna lektion så hade jag gjort klart det man skulle göra i förtid så jag ja
 
 2026-04-22 ProgrameringsLektion
 IDag lade jag till spelar rendering som fungerar bra och du kan se spelare när de ska vara synliga men inte annars. Detta hade jag problem med eftersom spelaren ska vara kortare en väggarna och ha ett huvud. Till min hjälp tog jag då gemeni för att förklara matten bakom vad jag behövde göra så att jag kunnde implementera lösningen själv. Nu förstår jag hur den fungerar. Jag lade även till så att det är svart långt bort och ljust nära spalaren med högre render distens. ännu har jag inte fått det att fungera på spelaren men det kommer nog strax. Jag ska även fixa knappen för att lämmna lobby så den fungerar när man trycker på den.
+
+2026-04-29 Programeringslektion
+Idag har jag jobbat på ett mål till spelet just nu så finns målet någonstans på kartan och nuddar man det så vinner man och kan starta spelet igen när alla dött eller vunnit. När det har gjort det så reetar lobbyn allt förutom ID och spelare. Om du dör har jag också lagt upp ett medelande om att du är dommed. JAg tyckte det passade bra men du kan ännu inte dö tyvvär.
