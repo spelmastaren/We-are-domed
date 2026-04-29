@@ -210,10 +210,12 @@ while isRunning:
 
 
                 screenwidth = screen.get_width()
+                ## render somthing as big as a wall if the ray hits a wall, the size of the wall is determined by the distance to the wall, and also makes it darker the further away it is.
                 if Map[int(y)][int(x)] == 1 or Map[int(y)][int(x)] == 2:
                     dist = n * 0.05 * math.cos(math.radians(i-30))
                     Column_height = (screen.get_height() / (dist + 0.000001))/2
                     ## Writes the lines for the walls on screan
+                    ## value 1 means wall, value 2 means goal, the goal is rendered in a different color to make it easier to see.
                     if Map[int(y)][int(x)] == 1:
                         pygame.draw.line(screen, (max(0, int(255-n)), max(0,int(255-n)),max(0,int(255-n))), (screen.get_width()//60*i, screen.get_height()//2+Column_height), (screen.get_width()//60*i, screen.get_height()//2-Column_height),screenwidth//60)
                     elif Map[int(y)][int(x)] == 2:
@@ -264,6 +266,19 @@ while isRunning:
             Rotation += math.pi/800
         elif pressed[pygame.K_a]:
             Rotation -= math.pi/800
+        
+        ## You won the game if you reach the goal, gamestate 5 is the win screen.
+        if gamestate == 5:
+            screen.fill((0, 255, 0))
+            screen.blit(pygame.font.SysFont("Arial", 30).render("You won Congratelations you are one of few", True, (0, 0, 0)), (screen.get_width() // 2 - 125, screen.get_height() // 2 - 15))
+            pygame.display.flip()
+        ## gamestate -5 is the lose screen, you get dommed and die if die in any way
+        if gamestate == -5:
+            screen.fill((255, 0, 0))
+            screen.blit(pygame.font.SysFont("Arial", 30).render("You are dommed and dead", True, (0, 0, 0)), (screen.get_width() // 2 - 125, screen.get_height() // 2 - 15))
+            pygame.display.flip()    
+
+        
 
     pygame.display.flip()
 

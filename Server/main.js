@@ -16,12 +16,18 @@ class lobby {
         this.players = [];
         this.open = true;
         this.Interval = null;
+        this.sholdChekIfendGame = false;
     };
 
     GameUpdate() {
         // makes a list with all player names and positions
         let playerInfos = [];
         for (const player of this.players) {
+                if (this.map[Math.floor(player.position.x)][Math.floor(player.position.y)] === 2) {
+                    player.InGame = false;
+                    this.sholdChekIfendGame = true;
+                }
+
                 if (this.map != null && this.map[Math.floor(player.position.y + player.currentInput.y * PlayerSpeed)] != null && this.map[Math.floor(player.position.y + player.currentInput.y * PlayerSpeed)][Math.floor(player.position.x + player.currentInput.x * PlayerSpeed)] === 0) {
                     player.position.x += player.currentInput.x * PlayerSpeed;
                     player.position.y += player.currentInput.y * PlayerSpeed;
@@ -30,6 +36,21 @@ class lobby {
                 Username: player.Username,
                 Position: player.position
             });
+        }
+        
+        if (this.sholdChekIfendGame) {
+            this.sholdChekIfendGame = false;
+            let NonePlayersLeft = true;
+            for (const player of this.players) {
+                if (player.InGame) {
+                    NonePlayersLeft = false;
+                    break;
+                }
+            }
+            if (NonePlayersLeft) {
+                this.clearInterval(this.Interval);
+                this.Interval = null;
+            }
         }
 
         // Send updated player info to all players in the lobby
@@ -96,6 +117,7 @@ function handelemessage(message,socket) {
         } else {
             lobby.open = false;
             for (const player of lobby.players) {
+                player.InGame = true;
                 if (player.conection.readyState === ws.OPEN) {
                     player.conection.send(JSON.stringify({ type: "GameStarted", data: { map: lobby.map } }));
                 } else {
@@ -146,6 +168,7 @@ class player {
         this.position = { x: 10, y: 10 };
         this.lobby = null;
         this.currentInput = { x: 0, y: 0};
+        this.InGame = false;
         this.conection = socket;
     };
 };
@@ -164,7 +187,7 @@ wss.on("listening", () => {
 function KeepPlayersConnected() {
     let playerinfolobbys = [];
     players.forEach((player) => {
-        if (player.lobby === null || player.lobby.open) {
+        if (player.InGame === false) {
             if (player.lobby === null) {
                 if (playerinfolobbys.length === 0) {
                     lobbys.forEach((lobby) => {
@@ -184,7 +207,7 @@ function KeepPlayersConnected() {
                         Username: player.Username
                     });
                 });
-                player.conection.send(JSON.stringify({type: "LobbyInfo", data: {lobbyID: player.lobby.ID, Players: Players}}));
+                player.conection.send(JSON.stringify({type: "LobbyInfo", data: {lobbyID: player.lobby.ID, Players: Players, gameRunning: player.lobby.Interval != null}}));
             }
         }
     });
