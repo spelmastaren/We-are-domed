@@ -62,6 +62,7 @@ class ServerComnicationHandler():
         self.players = []
         self.Playerlocations = []
         self.lobbyID = None
+        self.canStartGame = False
         while self.connection != None and isRunning:
             message = self.connection.recv()
             messageJSON = json.loads(message)
@@ -76,6 +77,7 @@ class ServerComnicationHandler():
             if messageJSON["type"] == "LobbyInfo":
                 self.players = messageJSON["data"]["Players"]
                 self.lobbyID = messageJSON["data"]["lobbyID"]
+                self.canStartGame = messageJSON["data"]["gameRunning"]
                 gamestate = 3
             if messageJSON["type"] == "GameStarted":
                 self.map = messageJSON["data"]["map"]
@@ -90,10 +92,9 @@ class ServerComnicationHandler():
                     if player["Username"] == self.username:
                         self.LocalPlayerLocation = player["Position"]
                         break
-                
-
-        
-
+            if messageJSON["type"] == "Winner":
+                gamestate = 5
+                print("Player won the game!")
 
 
 
@@ -131,7 +132,7 @@ while isRunning:
                         serverhandler.JoinLobbyWhitID(lobby["lobbyID"])
                         break
             if gamestate == 3:
-                if 0 < mouse_pos[0] < screen.get_width()//2 and screen.get_height() - 40 < mouse_pos[1] < screen.get_height():
+                if serverhandler.canStartGame and 0 < mouse_pos[0] < screen.get_width()//2 and screen.get_height() - 40 < mouse_pos[1] < screen.get_height():
                     print("Start game button clicked")
                     serverhandler.StartGame()
                 if screen.get_width()//2 < mouse_pos[0] < screen.get_width() and screen.get_height() - 40 < mouse_pos[1] < screen.get_height():

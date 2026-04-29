@@ -25,6 +25,7 @@ class lobby {
         for (const player of this.players) {
                 if (this.map[Math.floor(player.position.x)][Math.floor(player.position.y)] === 2) {
                     player.InGame = false;
+                    player.conection.send(JSON.stringify({ type: "Winner", data: {} }));
                     this.sholdChekIfendGame = true;
                 }
 
@@ -50,6 +51,8 @@ class lobby {
             if (NonePlayersLeft) {
                 this.clearInterval(this.Interval);
                 this.Interval = null;
+                this.open = true;
+                this.map = randomizemap();
             }
         }
 
