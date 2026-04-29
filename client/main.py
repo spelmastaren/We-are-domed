@@ -217,7 +217,7 @@ while isRunning:
                     if Map[int(y)][int(x)] == 1:
                         pygame.draw.line(screen, (max(0, int(255-n)), max(0,int(255-n)),max(0,int(255-n))), (screen.get_width()//60*i, screen.get_height()//2+Column_height), (screen.get_width()//60*i, screen.get_height()//2-Column_height),screenwidth//60)
                     elif Map[int(y)][int(x)] == 2:
-                        pygame.draw.line(screen, (max(0, int(-n)), max(0,int(255-n)),0), (screen.get_width()//60*i, screen.get_height()//2+Column_height), (screen.get_width()//60*i, screen.get_height()//2-Column_height),screenwidth//60)
+                        pygame.draw.line(screen, (max(0, int(255-n)), max(0,int(255-n)),0), (screen.get_width()//60*i, screen.get_height()//2+Column_height), (screen.get_width()//60*i, screen.get_height()//2-Column_height),screenwidth//60)
                     break
 
             ## renders players in sight, the distance is used to make the player smaller the further away they are, and also to make them darker the further away they are.
