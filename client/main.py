@@ -28,6 +28,7 @@ class ServerComnicationHandler():
                 self.LocalPlayerLocation = {"x": 5, "y": 5}
                 self.CurentMovment = {"x": 0, "y": 0}
                 self.Connected = True
+                self.lobbys = []
                 break
             except Exception as e:
                 ConnectionAttemt += 1
@@ -58,7 +59,6 @@ class ServerComnicationHandler():
     def HandleServerConnection(self):
         global gamestate
         global Rotation
-        self.lobbys = []
         self.players = []
         self.Playerlocations = []
         self.lobbyID = None
