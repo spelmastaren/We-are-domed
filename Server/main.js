@@ -156,7 +156,7 @@ function randomizemap() {
                     goalpos = { x: j, y: i }
                 }
             } else {
-                row.push(Math.random() < 0.1 ? 1 : 0); // 10% chance of being a wall
+                row.push(Math.random() < 0.4 ? 1 : 0); // 10% chance of being a wall
             }
         };
         map.push(row);

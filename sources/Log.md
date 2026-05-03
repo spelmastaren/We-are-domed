@@ -42,3 +42,6 @@ IDag lade jag till spelar rendering som fungerar bra och du kan se spelare när 
 
 2026-04-29 Programeringslektion
 Idag har jag jobbat på ett mål till spelet just nu så finns målet någonstans på kartan och nuddar man det så vinner man och kan starta spelet igen när alla dött eller vunnit. När det har gjort det så reetar lobbyn allt förutom ID och spelare. Om du dör har jag också lagt upp ett medelande om att du är dommed. JAg tyckte det passade bra men du kan ännu inte dö tyvvär.
+
+2026-05-03-Hemma
+Idag har jag gjort komentarer till allt jag gjort på klientsidan. Sedan har jag fixat ett kominikations fel där gameRunning blev canStartGame Vilket gjorde mig förverad och gjorde det fel så den fixade jag så den blev korekt. 
