@@ -13,12 +13,15 @@ ServerIP = "we-are-domed.onrender.com/"
 
 class ServerComnicationHandler():
     print("Server Communication Handler Initialized")
+    ## This is ran when the class is created and runs ConnectToServer in the background so we can render conection screan under the
     def __init__(self):
         self.Connected = False
         self.connection = None
         self.LeaveServer = False
         threading.Thread(target=self.ConnectToServer).start()
 
+
+    ## This function is responsible for connecting to the server and receiving the username from the server, it will also start a new thread to handle incoming messages from the server.
     def ConnectToServer(self):
         ConnectionAttemt = 0
         while ConnectionAttemt < 200 and self.LeaveServer == False:
@@ -39,25 +42,31 @@ class ServerComnicationHandler():
         
         threading.Thread(target=self.HandleServerConnection).start()
 
+    ## If we have a lobby id this function will send that we want to join and if server agreas we join the new lobby
     def JoinLobbyWhitID(self,ID):
         self.connection.send(json.dumps({"type": "JoinLobby", "data": {"lobby_id": ID}}))
-        
+    
+    ## Sends message to server to create a lobby
     def CreateLobby(self):
         print("Creating lobby...")
         self.connection.send(json.dumps({"type": "CreateLobby", "data": {}}))
 
+    ## This function is called when the player clicks the start game button, it sends a message to the server to start the game, the server will then send a message to all players in the lobby to start the game and load the map.
     def StartGame(self):
         self.connection.send(json.dumps({"type": "StartGame", "data": {}}))
     
+    ## This function is called to close connection and it will prepare and close when client is redy
     def Disconnect(self):
         self.LeaveServer = True
 
+    ## This function sends curent movment input to the server if it chanced else it dose not do anything
     def updateMovmentInput(self, x, y):
         if self.CurentMovment != {"x": x, "y": y}:
             self.connection.send(json.dumps({"type": "UpdateMovementInput", "data": {"x": x, "y": y}}))
             self.CurentMovment = {"x": x,"y": y}
 
     def HandleServerConnection(self):
+        ## This function is responsible for handling all incoming messages from the server and updating the game state accordingly.
         global gamestate
         global Rotation
         self.players = []
@@ -65,28 +74,38 @@ class ServerComnicationHandler():
         self.lobbyID = None
         self.canStartGame = False
         self.Screnachanching = 0
+        ## starts a loop that will run until the connection is closed or the player leaves the server, it will listen for messages from the server and update the game state accordingly.
         while self.connection != None and isRunning:
+            ## resives a message from the server
             message = self.connection.recv()
+            ## Mekes server messages readebale to client
             messageJSON = json.loads(message)
+            ## If we leve the server we have to not recive before we close conection
             if self.LeaveServer:
                 self.connection.close()
                 break
+            ## If server is unhappy to us for some resson it will print why
             if messageJSON["type"] == "error":
                 print("Error from server:", messageJSON["data"]["message"])
+            ## When we need to know what lobbys we can join this gets triggered to update that info
             if messageJSON["type"] == "AvailebaleLobbys":
                 self.lobbys = messageJSON["data"]["lobbys"]
                 gamestate = 1
+            ## When we are in a lobby this updates the information about the lobby like who is in it and if we can start the game or not and the lobby id
             if messageJSON["type"] == "LobbyInfo":
                 self.players = messageJSON["data"]["Players"]
                 self.lobbyID = messageJSON["data"]["lobbyID"]
-                self.canStartGame = messageJSON["data"]["gameRunning"]
+                self.canStartGame = not messageJSON["data"]["gameRunning"]
                 gamestate = 3
+            ## This is a server event that means we shold prepare to start the game and load it up
             if messageJSON["type"] == "GameStarted":
                 self.map = messageJSON["data"]["map"]
                 gamestate = 4
                 Rotation = math.pi / 4
                 print("Starting game...")
+                ## This is a prediction on where we are in the map. If we are wrong we are going to snap to corect positin after a while but this makes it smother
                 self.LocalPlayerLocation = {"x": 10.0, "y": 10.0}
+            ## Updates player locatins and also local players position, Position is used to know wher we shold render
             if messageJSON["type"] == "UpdateLocations":
                 gamestate = 4
                 self.Playerlocations = messageJSON["data"]["players"]
@@ -94,6 +113,7 @@ class ServerComnicationHandler():
                     if player["Username"] == self.username:
                         self.LocalPlayerLocation = player["Position"]
                         break
+            ## The server thinks you won the game and this event prints and switshes to a game scen for victory
             if messageJSON["type"] == "Winner":
                 self.Screnachanching = time.time() + 10
                 gamestate = 5
@@ -209,7 +229,8 @@ while isRunning:
             sin = 0.01 * math.sin(rot_i)
             cos = 0.01 * math.cos(rot_i)
             player_in_sight = []
-            for n in range(1000):
+            ## Shoots ray 600 uniits forward
+            for n in range(500):
                 x += cos
                 y += sin
 
@@ -286,6 +307,7 @@ while isRunning:
                 gamestate = 3
                 Rotation = 0
                 serverhandler.Screnachanching = 0
+        
         ## gamestate -5 is the lose screen, you get dommed and die if die in any way
         if gamestate == -5:
             screen.fill((255, 0, 0))
