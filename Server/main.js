@@ -29,7 +29,7 @@ class lobby {
                     this.sholdChekIfendGame = true;
                 }
 
-                if (this.map != null && this.map[Math.floor(player.position.y + player.currentInput.y * PlayerSpeed)] != null && this.map[Math.floor(player.position.y + player.currentInput.y * PlayerSpeed)][Math.floor(player.position.x + player.currentInput.x * PlayerSpeed)] === 0) {
+                if (this.map != null && this.map[Math.floor(player.position.y + player.currentInput.y * PlayerSpeed)] != null && this.map[Math.floor(player.position.y + player.currentInput.y * PlayerSpeed)][Math.floor(player.position.x + player.currentInput.x * PlayerSpeed)] !== 0) {
                     player.position.x += player.currentInput.x * PlayerSpeed;
                     player.position.y += player.currentInput.y * PlayerSpeed;
                 }
