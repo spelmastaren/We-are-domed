@@ -30,7 +30,6 @@ class lobby {
         let playerInfos = [];
         for (const player of this.players) {
             if (player.InGame === true) {
-                    console.log("Player", player.Username, "is at position:", player.position, "with input:", player.currentInput);
                     if (this.map[Math.floor(player.position.x)][Math.floor(player.position.y)] === 2) {
                         player.InGame = false;
                         console.log("Player", player.Username, "has reached the goal and won the game!");
