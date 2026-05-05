@@ -14,9 +14,9 @@ class lobby {
         // Genererar och avgör om det är möjligt att klara den
         let map, goal = randomizemap();
         console.log(map);
-        while (FindshortestPath(map, { x: 10, y: 10 }, { x: goal.x, y: goal.y }) == null) {
-            map, goal = randomizemap();
-        };
+       // while (FindshortestPath(map, { x: 10, y: 10 }, { x: goal.x, y: goal.y }) == null) {
+        map, goal = randomizemap();
+        //};
         this.map = map;
         this.ID = name;
         this.players = [];
@@ -232,7 +232,7 @@ function randomizemap() {
                     goalpos = { x: j, y: i }
                 }
             } else {
-                row.push(Math.random() < 0.4 ? 1 : 0); // 10% chance of being a wall
+                row.push(Math.random() < 0.4 ? 1 : 0); // 40% chance of being a wall
             }
         };
         map.push(row);
