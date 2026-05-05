@@ -29,20 +29,24 @@ class lobby {
         // makes a list with all player names and positions
         let playerInfos = [];
         for (const player of this.players) {
-                if (this.map[Math.floor(player.position.x)][Math.floor(player.position.y)] === 2) {
-                    player.InGame = false;
-                    player.conection.send(JSON.stringify({ type: "Winner", data: {} }));
-                    this.sholdChekIfendGame = true;
-                }
+            if (player.InGame === true) {
+                    console.log("Player", player.Username, "is at position:", player.position, "with input:", player.currentInput);
+                    if (this.map[Math.floor(player.position.x)][Math.floor(player.position.y)] === 2) {
+                        player.InGame = false;
+                        console.log("Player", player.Username, "has reached the goal and won the game!");
+                        player.conection.send(JSON.stringify({ type: "Winner", data: {} }));
+                        this.sholdChekIfendGame = true;
+                    }
 
-                if (this.map != null && this.map[Math.floor(player.position.y + player.currentInput.y * PlayerSpeed)] != null && this.map[Math.floor(player.position.y + player.currentInput.y * PlayerSpeed)][Math.floor(player.position.x + player.currentInput.x * PlayerSpeed)] !== 1) {
-                    player.position.x += player.currentInput.x * PlayerSpeed;
-                    player.position.y += player.currentInput.y * PlayerSpeed;
-                }
-            playerInfos.push({
-                Username: player.Username,
-                Position: player.position
-            });
+                    if (this.map != null && this.map[Math.floor(player.position.y + player.currentInput.y * PlayerSpeed)] != null && this.map[Math.floor(player.position.y + player.currentInput.y * PlayerSpeed)][Math.floor(player.position.x + player.currentInput.x * PlayerSpeed)] !== 1) {
+                        player.position.x += player.currentInput.x * PlayerSpeed;
+                        player.position.y += player.currentInput.y * PlayerSpeed;
+                    }
+                playerInfos.push({
+                    Username: player.Username,
+                    Position: player.position
+                });
+            }
         }
         
         if (this.sholdChekIfendGame) {
