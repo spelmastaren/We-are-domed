@@ -14,6 +14,7 @@ class lobby {
         // Genererar och avgör om det är möjligt att klara den
         let map, goal = randomizemap();
         console.log(map);
+        console.log(goal);
        // while (FindshortestPath(map, { x: 10, y: 10 }, { x: goal.x, y: goal.y }) == null) {
         map, goal = randomizemap();
         //};
