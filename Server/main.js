@@ -13,11 +13,10 @@ class lobby {
     constructor(name) {
         // Genererar och avgör om det är möjligt att klara den
         let [map, goal] = randomizemap();
-        console.log(map);
-        console.log(goal);
-       // while (FindshortestPath(map, { x: 10, y: 10 }, { x: goal.x, y: goal.y }) == null) {
-        [map, goal] = randomizemap();
-        //};
+        while (FindshortestPath(map, { x: 10, y: 10 }, { x: goal.x, y: goal.y }) == null) {
+            [map, goal] = randomizemap();
+        };
+        console.log("Lobby created with ID:", name, "and goal at:", goal);
         this.map = map;
         this.ID = name;
         this.players = [];
