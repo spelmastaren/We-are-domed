@@ -150,11 +150,6 @@ function FindshortestPath(grid, start, end) {
 
     return null; // Ingen väg hittades
 }
-    
-
-        
-    
-}
 
 function handelemessage(message,socket) {
     const messageJSON = JSON.parse(message);
