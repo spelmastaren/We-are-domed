@@ -12,3 +12,6 @@ https://www.youtube.com/watch?v=5xyeWBxmqzc&list=PLlYT7ZZOcBNA1hVBjkKFMnW0YDDODd
 
 Pygame Docs
 https://www.pygame.org/docs/
+
+How to make A*
+https://www.youtube.com/watch?v=aKYlikFAV4k&list=WL&index=1&t=2376s

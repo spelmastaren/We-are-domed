@@ -11,8 +11,13 @@ let players = new Map();
 
 class lobby {
     constructor(name) {
+        // Genererar och avgör om det är möjligt att klara den
+        let map, goal = randomizemap();
+        while (FindshortestPath(map, { x: 10, y: 10 }, { x: goal.x, y: goal.y }) == null) {
+            map, goal = randomizemap();
+        };
+        this.map = map;
         this.ID = name;
-        this.map = randomizemap();
         this.players = [];
         this.open = true;
         this.Interval = null;
@@ -52,7 +57,11 @@ class lobby {
                 this.clearInterval(this.Interval);
                 this.Interval = null;
                 this.open = true;
-                this.map = randomizemap();
+                let map, goal = randomizemap();
+                while (FindshortestPath(map, { x: 10, y: 10 }, { x: goal.x, y: goal.y }) == null) {
+                    map, goal = randomizemap();
+                };
+                this.map = map;
             }
         }
 
@@ -74,7 +83,78 @@ function createLobby() {
     return Lobby;
 }
 
+function FindshortestPath(grid, start, end) {
+    const rows = grid.length;
+    const cols = grid[0].length;
 
+    // Hjälpfunktion för att skapa en unik sträng-nyckel för varje koordinat
+    const key = (x, y) => `${x},${y}`;
+    
+    // Heuristik: Manhattan distance (beräknar kvarvarande steg utan diagonaler)
+    const getH = (x, y) => Math.abs(x - end.x) + Math.abs(y - end.y);
+
+    let openSet = [key(start.x, start.y)];
+    let cameFrom = new Map();
+
+    // gScore: Kostnaden från start till nuvarande punkt (standard: oändlighet)
+    let gScore = new Map();
+    gScore.set(key(start.x, start.y), 0);
+
+    // fScore: gScore + hScore (uppskattad total kostnad)
+    let fScore = new Map();
+    fScore.set(key(start.x, start.y), getH(start.x, start.y));
+
+    while (openSet.length > 0) {
+        // Hitta noden i openSet med lägst fScore
+        let currentKey = openSet.reduce((min, k) => (fScore.get(k) < fScore.get(min) ? k : min), openSet[0]);
+        let [cx, cy] = currentKey.split(',').map(Number);
+
+        // Om vi är framme: Rekonstruera vägen genom att backa via 'cameFrom'
+        if (cx === end.x && cy === end.y) {
+            let path = [];
+            while (currentKey) {
+                let [px, py] = currentKey.split(',').map(Number);
+                path.unshift({ x: px, y: py });
+                currentKey = cameFrom.get(currentKey);
+            }
+            return path;
+        }
+
+        // Ta bort nuvarande från openSet
+        openSet = openSet.filter(k => k !== currentKey);
+
+        // Kolla alla 4 grannar (upp, ner, vänster, höger)
+        const directions = [[0, 1], [0, -1], [1, 0], [-1, 0]];
+        for (let [dx, dy] of directions) {
+            let nx = cx + dx;
+            let ny = cy + dy;
+
+            // Kontrollera att grannen är inom kartan och inte är en vägg (1)
+            if (nx >= 0 && nx < cols && ny >= 0 && ny < rows && grid[ny][nx] !== 1) {
+                let neighborKey = key(nx, ny);
+                let tentativeGScore = gScore.get(currentKey) + 1;
+
+                // Om denna väg till grannen är bättre än den vi hittat tidigare
+                if (tentativeGScore < (gScore.has(neighborKey) ? gScore.get(neighborKey) : Infinity)) {
+                    cameFrom.set(neighborKey, currentKey);
+                    gScore.set(neighborKey, tentativeGScore);
+                    fScore.set(neighborKey, tentativeGScore + getH(nx, ny));
+
+                    if (!openSet.includes(neighborKey)) {
+                        openSet.push(neighborKey);
+                    }
+                }
+            }
+        }
+    }
+
+    return null; // Ingen väg hittades
+}
+    
+
+        
+    
+}
 
 function handelemessage(message,socket) {
     const messageJSON = JSON.parse(message);
@@ -162,7 +242,7 @@ function randomizemap() {
         map.push(row);
     };
     map[goalpos.y][goalpos.x] = 2; // Place the goal    
-    return map;
+    return map, goalpos;
 };
 
 class player {
