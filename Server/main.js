@@ -30,7 +30,7 @@ class lobby {
         let playerInfos = [];
         for (const player of this.players) {
             if (player.InGame === true) {
-                    if (this.map[Math.floor(player.position.x)][Math.floor(player.position.y)] === 2) {
+                    if (this.map[Math.floor(player.position.y)][Math.floor(player.position.x)] === 2) {
                         player.InGame = false;
                         console.log("Player", player.Username, "has reached the goal and won the game!");
                         player.conection.send(JSON.stringify({ type: "Winner", data: {} }));
