@@ -239,7 +239,7 @@ function randomizemap() {
         map.push(row);
     };
     map[goalpos.y][goalpos.x] = 2; // Place the goal    
-    return { map, goalpos };
+    return [map, goalpos];
 };
 
 class player {
