@@ -59,9 +59,9 @@ class lobby {
                 this.clearInterval(this.Interval);
                 this.Interval = null;
                 this.open = true;
-                let map, goal = randomizemap();
+                let [map, goal] = randomizemap();
                 while (FindshortestPath(map, { x: 10, y: 10 }, { x: goal.x, y: goal.y }) == null) {
-                    map, goal = randomizemap();
+                    [map, goal] = randomizemap();
                 };
                 this.map = map;
             }
