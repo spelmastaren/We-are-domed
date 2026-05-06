@@ -97,7 +97,10 @@ class ServerComnicationHandler():
                 self.players = messageJSON["data"]["Players"]
                 self.lobbyID = messageJSON["data"]["lobbyID"]
                 self.canStartGame = not messageJSON["data"]["gameRunning"]
-                gamestate = 3
+                if time.time() > serverhandler.Screnachanching:
+                    gamestate = 3
+                    Rotation = 0
+                    serverhandler.Screnachanching = 0
             ## This is a server event that means we shold prepare to start the game and load it up
             if messageJSON["type"] == "GameStarted":
                 self.map = messageJSON["data"]["map"]
@@ -304,10 +307,6 @@ while isRunning:
             screen.fill((0, 255, 0))
             screen.blit(pygame.font.SysFont("Arial", 30).render("You won Congratelations you are one of few", True, (0, 0, 0)), (screen.get_width() // 2 - 125, screen.get_height() // 2 - 15))
             pygame.display.flip()
-            if time.time() > serverhandler.Screnachanching:
-                gamestate = 3
-                Rotation = 0
-                serverhandler.Screnachanching = 0
         
         ## gamestate -5 is the lose screen, you get dommed and die if die in any way
         if gamestate == -5:
