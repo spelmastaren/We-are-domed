@@ -293,7 +293,7 @@ function KeepPlayersConnected() {
                         Username: player.Username
                     });
                 });
-                player.conection.send(JSON.stringify({type: "LobbyInfo", data: {lobbyID: player.lobby.ID, Players: Players, gameRunning: player.lobby.Interval != null}}));
+                player.conection.send(JSON.stringify({type: "LobbyInfo", data: {lobbyID: player.lobby.ID, Players: Players, gameRunning: !!player.lobby.Interval}}));
             }
         }
     });

@@ -136,7 +136,6 @@ isRunning = True
 
 ##ServerComnicationHandler.StartGame(serverhandler)
 while isRunning:
-
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             isRunning = False
@@ -302,17 +301,17 @@ while isRunning:
         elif pressed[pygame.K_a]:
             Rotation -= math.pi/800
         
-        ## You won the game if you reach the goal, gamestate 5 is the win screen.
-        if gamestate == 5:
-            screen.fill((0, 255, 0))
-            screen.blit(pygame.font.SysFont("Arial", 30).render("You won Congratelations you are one of few", True, (0, 0, 0)), (screen.get_width() // 2 - 125, screen.get_height() // 2 - 15))
-            pygame.display.flip()
-        
-        ## gamestate -5 is the lose screen, you get dommed and die if die in any way
-        if gamestate == -5:
-            screen.fill((255, 0, 0))
-            screen.blit(pygame.font.SysFont("Arial", 30).render("You are dommed and dead", True, (0, 0, 0)), (screen.get_width() // 2 - 125, screen.get_height() // 2 - 15))
-            pygame.display.flip()    
+    ## You won the game if you reach the goal, gamestate 5 is the win screen.
+    if gamestate == 5:
+        screen.fill((0, 255, 0))
+        screen.blit(pygame.font.SysFont("Arial", 25).render("You won! Congratelations you are one of few", True, (0, 0, 0)), (screen.get_width() // 2 - 201, screen.get_height() // 2 - 15))
+        pygame.display.flip()
+    
+    ## gamestate -5 is the lose screen, you get dommed and die if die in any way
+    if gamestate == -5:
+        screen.fill((255, 0, 0))
+        screen.blit(pygame.font.SysFont("Arial", 30).render("You are dommed and dead", True, (0, 0, 0)), (screen.get_width() // 2 - 125, screen.get_height() // 2 - 15))
+        pygame.display.flip()    
 
         
 
