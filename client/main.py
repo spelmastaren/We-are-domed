@@ -51,6 +51,10 @@ class ServerComnicationHandler():
         print("Creating lobby...")
         self.connection.send(json.dumps({"type": "CreateLobby", "data": {}}))
 
+    def LeaveLobby(self):
+        print("Leaving lobby...")
+        self.connection.send(json.dumps({"type": "LeaveLobby", "data": {}}))
+
     ## This function is called when the player clicks the start game button, it sends a message to the server to start the game, the server will then send a message to all players in the lobby to start the game and load the map.
     def StartGame(self):
         self.connection.send(json.dumps({"type": "StartGame", "data": {}}))
@@ -163,6 +167,7 @@ while isRunning:
                     serverhandler.StartGame()
                 if screen.get_width()//2 < mouse_pos[0] < screen.get_width() and screen.get_height() - 40 < mouse_pos[1] < screen.get_height():
                     print("Leave lobby button clicked")
+                    serverhandler.LeaveLobby()
     
     ## gamestate 1 Not Yet Connected to a server, but trying to connect.
     if gamestate == 0:
