@@ -78,6 +78,7 @@ class ServerComnicationHandler():
         while self.connection != None and isRunning:
             ## resives a message from the server
             message = self.connection.recv()
+            print("Message received from server:", message)
             ## Mekes server messages readebale to client
             messageJSON = json.loads(message)
             ## If we leve the server we have to not recive before we close conection

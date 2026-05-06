@@ -52,12 +52,13 @@ class lobby {
             this.sholdChekIfendGame = false;
             let NonePlayersLeft = true;
             for (const player of this.players) {
-                if (player.InGame) {
+                if (player.InGame === true) {
                     NonePlayersLeft = false;
                     break;
                 }
             }
-            if (NonePlayersLeft) {
+            if (NonePlayersLeft == true) {
+                console.log("Game ended in lobby with ID:", this.ID);
                 clearInterval(this.Interval);
                 this.Interval = null;
                 this.open = true;
@@ -71,10 +72,12 @@ class lobby {
 
         // Send updated player info to all players in the lobby
         for (const player of this.players) {
-            if (player.conection.readyState === WebSocket.OPEN) {
-                player.conection.send(JSON.stringify({ type: "UpdateLocations", data: { players: playerInfos } }));
-            } else {
-                console.log("Player connection Missed", player.Username);
+            if (player.InGame === true) {
+                if (player.conection.readyState === WebSocket.OPEN) {
+                    player.conection.send(JSON.stringify({ type: "UpdateLocations", data: { players: playerInfos } }));
+                } else {
+                    console.log("Player connection Missed", player.Username);
+                }
             }
         }
     }
