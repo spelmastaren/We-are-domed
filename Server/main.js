@@ -210,7 +210,7 @@ function handelemessage(message,socket) {
                     player.conection.close();
                 }
             }
-            setInterval(() => lobby.GameUpdate(), 50);
+            lobby.Interval = setInterval(() => lobby.GameUpdate(), 50);
         }
     };
     if (messageJSON.type === "UpdateMovementInput") {
