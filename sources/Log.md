@@ -45,3 +45,6 @@ Idag har jag jobbat på ett mål till spelet just nu så finns målet någonstan
 
 2026-05-03-Hemma
 Idag har jag gjort komentarer till allt jag gjort på klientsidan. Sedan har jag fixat ett kominikations fel där gameRunning blev canStartGame Vilket gjorde mig förverad och gjorde det fel så den fixade jag så den blev korekt. 
+
+2026-05-05/06 - Hemman / Programeringslektionen
+I denna uppdatering så har jag suttit i ett långt tag med att koda A* algoritmen. Den andvänder jag till att kolla om bannan går att klara. Om den inte gör det genererar vi ny till det går. A* algoritmen ska också andvändas till fiender i framtiden som ska göra att spelaren förlorar. På programeringslektionen så fixade jag ett problem med att jag alldrig satte intervallen så jag kom ihåg den och fixade så att servern sluta sicka spelar data om spelaren inte är i spelet och om spelaren är där så kommer det en vinskärm. Spelet är däremot väldigt svårt då leo eller jag inte lyckats klara det även om vi letade mycket efter uttgången. Undertiden spelet körs så kommer ingen kunna starta det igen men när spelet är klart så kan man starta det igen. Strax kommer jag lägga till funktionen att du kan lämmna lobbys om du vill och se vilka som kör och vilka som väntar när man själv väntar.
