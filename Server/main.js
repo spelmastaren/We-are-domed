@@ -221,6 +221,25 @@ function handelemessage(message,socket) {
         player.currentInput.x = messageJSON.data["x"];
         player.currentInput.y = messageJSON.data["y"];
     }
+    if (messageJSON.type === "LeaveLobby") {
+        const lobby = player.lobby;
+        if (lobby == null) {
+            socket.send(JSON.stringify({ type: "error", data: { message: "Player is not in a lobby" } }));
+            return;
+        }
+        lobby.players = lobby.players.filter((cplayer) => cplayer !== player);
+        player.lobby = null;
+        player.InGame = false;
+        console.log("Player", player.Username, "left lobby with ID:", lobby.ID);
+        if (lobby.players.length === 0) {
+            console.log("Lobby is empty, Deleating lobby with ID " + lobby.ID)
+            if (lobby.Interval != null) {
+                clearInterval(lobby.Interval)
+                lobby.Interval = null
+            }
+            lobbys.delete(lobby.ID)
+        }
+    }
 };
 
 function randomizemap() {
