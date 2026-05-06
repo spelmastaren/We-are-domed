@@ -58,7 +58,7 @@ class lobby {
                 }
             }
             if (NonePlayersLeft) {
-                this.clearInterval(this.Interval);
+                clearInterval(this.Interval);
                 this.Interval = null;
                 this.open = true;
                 let [map, goal] = randomizemap();
