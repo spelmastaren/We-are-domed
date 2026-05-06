@@ -91,29 +91,30 @@ function FindshortestPath(grid, start, end) {
     const rows = grid.length;
     const cols = grid[0].length;
 
-    // Hjälpfunktion för att skapa en unik sträng-nyckel för varje koordinat
+    // Helpfunction to convert coordinates to a string key for maps
     const key = (x, y) => `${x},${y}`;
     
-    // Heuristik: Manhattan distance (beräknar kvarvarande steg utan diagonaler)
+    // Heuristik: manhattan distance guss
     const getH = (x, y) => Math.abs(x - end.x) + Math.abs(y - end.y);
 
     let openSet = [key(start.x, start.y)];
     let cameFrom = new Map();
 
-    // gScore: Kostnaden från start till nuvarande punkt (standard: oändlighet)
+    // gscore how long from start to the node
     let gScore = new Map();
     gScore.set(key(start.x, start.y), 0);
 
-    // fScore: gScore + hScore (uppskattad total kostnad)
+    // fscore = gscore + hscore
     let fScore = new Map();
     fScore.set(key(start.x, start.y), getH(start.x, start.y));
 
+    // while we have nodes to explore
     while (openSet.length > 0) {
-        // Hitta noden i openSet med lägst fScore
+        // Finde node in openSet with lowest fScore
         let currentKey = openSet.reduce((min, k) => (fScore.get(k) < fScore.get(min) ? k : min), openSet[0]);
         let [cx, cy] = currentKey.split(',').map(Number);
 
-        // Om vi är framme: Rekonstruera vägen genom att backa via 'cameFrom'
+        // If we reached the end, reconstruct the path
         if (cx === end.x && cy === end.y) {
             let path = [];
             while (currentKey) {
@@ -124,21 +125,21 @@ function FindshortestPath(grid, start, end) {
             return path;
         }
 
-        // Ta bort nuvarande från openSet
+        // remove current from openSet
         openSet = openSet.filter(k => k !== currentKey);
 
-        // Kolla alla 4 grannar (upp, ner, vänster, höger)
+        // Check neighbors (up, down, left, right)
         const directions = [[0, 1], [0, -1], [1, 0], [-1, 0]];
         for (let [dx, dy] of directions) {
             let nx = cx + dx;
             let ny = cy + dy;
 
-            // Kontrollera att grannen är inom kartan och inte är en vägg (1)
+            // check if neighbor is within bounds and not a wall
             if (nx >= 0 && nx < cols && ny >= 0 && ny < rows && grid[ny][nx] !== 1) {
                 let neighborKey = key(nx, ny);
                 let tentativeGScore = gScore.get(currentKey) + 1;
 
-                // Om denna väg till grannen är bättre än den vi hittat tidigare
+                // If this path to the neighbor is better than the one we found earlier
                 if (tentativeGScore < (gScore.has(neighborKey) ? gScore.get(neighborKey) : Infinity)) {
                     cameFrom.set(neighborKey, currentKey);
                     gScore.set(neighborKey, tentativeGScore);
@@ -152,7 +153,7 @@ function FindshortestPath(grid, start, end) {
         }
     }
 
-    return null; // Ingen väg hittades
+    return null; // No path found
 }
 
 function handelemessage(message,socket) {
