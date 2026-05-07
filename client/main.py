@@ -139,9 +139,12 @@ screen = pygame.display.set_mode((500, 500), pygame.RESIZABLE)
 
 serverhandler = None
 isRunning = True
-
+lastTime = time.time()
 ##ServerComnicationHandler.StartGame(serverhandler)
 while isRunning:
+    currentTime = time.time()
+    dt = currentTime - lastTime
+    lastTime = currentTime
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             isRunning = False
@@ -304,9 +307,10 @@ while isRunning:
 
         ## Loking around logic 
         if pressed[pygame.K_d]:
-            Rotation += math.pi/800
+            Rotation += (math.pi/800) * dt * 500
         elif pressed[pygame.K_a]:
-            Rotation -= math.pi/800
+            Rotation -= (math.pi/800) * dt * 500
+        print(dt)
         
     ## You won the game if you reach the goal, gamestate 5 is the win screen.
     if gamestate == 5:

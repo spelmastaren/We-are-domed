@@ -48,3 +48,6 @@ Idag har jag gjort komentarer till allt jag gjort på klientsidan. Sedan har jag
 
 2026-05-05/06 - Hemman / Programeringslektionen
 I denna uppdatering så har jag suttit i ett långt tag med att koda A* algoritmen. Den andvänder jag till att kolla om bannan går att klara. Om den inte gör det genererar vi ny till det går. A* algoritmen ska också andvändas till fiender i framtiden som ska göra att spelaren förlorar. På programeringslektionen så fixade jag ett problem med att jag alldrig satte intervallen så jag kom ihåg den och fixade så att servern sluta sicka spelar data om spelaren inte är i spelet och om spelaren är där så kommer det en vinskärm. Spelet är däremot väldigt svårt då leo eller jag inte lyckats klara det även om vi letade mycket efter uttgången. Undertiden spelet körs så kommer ingen kunna starta det igen men när spelet är klart så kan man starta det igen. Strax kommer jag lägga till funktionen att du kan lämmna lobbys om du vill och se vilka som kör och vilka som väntar när man själv väntar.
+
+2026-05-05 Hemma
+Denna gång lade jag till delta time så att alla upptäcker en likadan experiens när det spelar i hur fort kameran rör sig. Med denna revlesionerande funktion kan alla oavsätt 90 tals eller 2040 dator så kan alla roterar i samma hastighet.
