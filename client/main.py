@@ -132,7 +132,9 @@ class ServerComnicationHandler():
 
 
 pygame.init()
+pygame.display.set_caption("We are domed")
 screen = pygame.display.set_mode((500, 500), pygame.RESIZABLE)
+
 
 serverhandler = None
 isRunning = True
