@@ -60,7 +60,7 @@ class lobby {
                         this.sholdChekIfendGame = true;
                     }
                     for (const enemy of this.enemies) { 
-                        if (Math.floor(enemy.position.x * 400) === Math.floor(player.position.x * 400) && Math.floor(enemy.position.y * 400) === Math.floor(player.position.y * 400)) {
+                        if (Math.floor(enemy.position.x * 1000) === Math.floor(player.position.x * 1000) && Math.floor(enemy.position.y * 1000) === Math.floor(player.position.y * 1000)) {
                             player.InGame = false;
                             console.log("Enemy has eaten player", player.Username, "in lobby with ID:", this.ID);
                             player.conection.send(JSON.stringify({ type: "Caught", data: {} }));
