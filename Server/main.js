@@ -365,7 +365,7 @@ class enemy {
             } else {
                 const curentTargetBlock = { x: Math.floor(this.target.position.x), y: Math.floor(this.target.position.y) };
                 if (curentTargetBlock.x === this.lastBlockToGoTo.x && curentTargetBlock.y === this.lastBlockToGoTo.y) {
-                    if (this.path.length === 0) {
+                    if (this.path == null || this.path.length === 0) {
                         this.path = FindshortestPath(this.Lobby.map, myblock, curentTargetBlock);
                         if (this.path == null || this.path.length === 0) {
                             return
