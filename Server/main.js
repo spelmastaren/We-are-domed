@@ -343,7 +343,7 @@ class enemy {
         }
         if (this.target != null) {
             if (Math.floor(this.target.position.x) !== this.targetBlock.x || Math.floor(this.target.position.y) !== this.targetBlock.y) {
-                if (Math.floor(this.position.x) === this.player.position.x && Math.floor(this.position.y) === this.player.position.y) {
+                if (Math.floor(this.position.x) === this.target.position.x && Math.floor(this.position.y) === this.target.position.y) {
                     this.DumbGoTo(this.target.position);
                 } else {
                     this.targetBlock = { x: Math.floor(this.target.position.x), y: Math.floor(this.target.position.y)};
