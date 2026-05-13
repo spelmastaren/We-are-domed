@@ -19,6 +19,7 @@ class lobby {
         this.sholdChekIfendGame = false;
         this.enemies = [];
         console.log("Lobby created with ID:", name);
+        this.PerpareLobby();
     };
 
     PerpareLobby() {

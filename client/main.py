@@ -74,6 +74,7 @@ class ServerComnicationHandler():
         global gamestate
         global Rotation
         self.players = []
+        self.Enemyslocations = []
         self.Playerlocations = []
         self.lobbyID = None
         self.canStartGame = False
@@ -258,7 +259,7 @@ while isRunning:
                     if player["Username"] != serverhandler.username and int(player["Position"]["x"]*30) == int(x*30) and int(player["Position"]["y"]*30) == int(y*30):
                         player_in_sight.append({"Player": player, "dist": n * 0.05 * math.cos(math.radians(i-30)), "raytravle": n})
 
-                // Cheking for enemys in sight, this is basicly the same as player detection but for enemys, it adds enemys in sight to the Enemys_in_sight list with the distance to the enemy.
+                ## Cheking for enemys in sight, this is basicly the same as player detection but for enemys, it adds enemys in sight to the Enemys_in_sight list with the distance to the enemy.
                 for enemy in serverhandler.Enemyslocations:
                     Enemys_in_sight.append({"Enemy": enemy, "dist": n * 0.05 * math.cos(math.radians(i-30)), "raytravle": n})
 
@@ -271,7 +272,7 @@ while isRunning:
                     ## Writes the lines for the walls on screan
                     ## value 1 means wall, value 2 means goal, the goal is rendered in a different color to make it easier to see.
                     if Map[int(y)][int(x)] == 1:
-                        pygame.draw.line(screen, (max(0, int(255-n)), max(0,int(255-n)),0)), (screen.get_width()//60*i, screen.get_height()//2+Column_height), (screen.get_width()//60*i, screen.get_height()//2-Column_height),screenwidth//60)
+                        pygame.draw.line(screen, ((max(0, int(255-n)), max(0,int(255-n)),0)), (screen.get_width()//60*i, screen.get_height()//2+Column_height), (screen.get_width()//60*i, screen.get_height()//2-Column_height),screenwidth//60)
                     elif Map[int(y)][int(x)] == 2:
                         pygame.draw.line(screen, (0,0,0), (screen.get_width()//60*i, screen.get_height()//2+Column_height), (screen.get_width()//60*i, screen.get_height()//2-Column_height),screenwidth//60)
                     break
