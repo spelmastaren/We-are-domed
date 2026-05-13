@@ -367,6 +367,9 @@ class enemy {
                 if (curentTargetBlock.x === this.lastBlockToGoTo.x && curentTargetBlock.y === this.lastBlockToGoTo.y) {
                     if (this.path.length === 0) {
                         this.path = FindshortestPath(this.Lobby.map, myblock, curentTargetBlock);
+                        if (this.path == null || this.path.length === 0) {
+                            return
+                        };
                         this.pathIndex = 0;
                     }
                     this.DumbGoTo({ x: this.path[this.pathIndex].x + 0.5, y: this.path[this.pathIndex].y + 0.5 });
