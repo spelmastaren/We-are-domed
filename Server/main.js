@@ -311,7 +311,7 @@ class enemy {
         this.path = [];
         this.pathIndex = 0;
         this.Lobby = lobby;
-        this.targetBlock = { x: Math.floor(this.target.position.x), y: Math.floor(this.target.position.y)};
+        this.targetBlock = { x: Math.floor(this.position.x), y: Math.floor(this.position.y)};
     };
 
     DumbGoTo(position) {
@@ -334,7 +334,6 @@ class enemy {
                     }
                 }
             }
-            this.target = closestPlayer;
             this.target = closestPlayer;
         }
         if (this.target != null) {
