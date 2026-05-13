@@ -29,7 +29,7 @@ class lobby {
             [map, goal] = randomizemap();
         };
         map[10][10] = 0;
-        console.log("Lobby Map Prepared with ID:", name, "and goal at:", goal);
+        console.log("Lobby Map Prepared with ID:", this.ID, "and goal at:", goal);
         this.map = map;
 
         // Spawn Enemies
@@ -43,7 +43,7 @@ class lobby {
             }
             this.enemies.push(Enemy);
         }
-        console.log("Lobby with ID:", name, " have enemies spawned redy and hungry for players to hunt");
+        console.log("Lobby with ID:", this.ID, " have enemies spawned redy and hungry for players to hunt");
     }
 
     GameUpdate() {
