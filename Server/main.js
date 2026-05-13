@@ -373,6 +373,7 @@ class enemy {
                         this.lastBlockToGoTo.y = curentTargetBlock.y;
                     }
                     if (this.path == null || this.path.length === 0) {
+                        this.target = null;
                         return
                     };
                     this.DumbGoTo({ x: this.path[this.pathIndex].x + 0.5, y: this.path[this.pathIndex].y + 0.5 });
