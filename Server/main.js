@@ -327,6 +327,7 @@ class enemy {
     DumbGoTo(position) {
         const dx = position.x - this.position.x;
         const dy = position.y - this.position.y;
+        console.log("Going");
         if (dx === 0 && dy === 0) return;
         if (dx > 0) {
             this.position.x += this.speed;
@@ -340,7 +341,6 @@ class enemy {
         if (dy < 0) {
             this.position.y -= this.speed;
         }
-        console.log("Going");
     }
 
     GameUpdate() {
