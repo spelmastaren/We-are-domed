@@ -23,6 +23,7 @@ class lobby {
     };
 
     PerpareLobby() {
+        this.enemies = [];
         // Genererar och avgör om det är möjligt att klara den
         let [map, goal] = randomizemap();
         while (FindshortestPath(map, { x: 10, y: 10 }, { x: goal.x, y: goal.y }) == null) {

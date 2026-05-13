@@ -122,7 +122,6 @@ class ServerComnicationHandler():
                     if player["Username"] == self.username:
                         self.LocalPlayerLocation = player["Position"]
                         break
-                print(self.Enemyslocations)
                 
 
             ## The server thinks you won the game and this event prints and switshes to a game scen for victory
@@ -301,9 +300,8 @@ while isRunning:
                 y_floor = screen.get_height() // 2 + Column_height
                 y_body_top = y_floor - (Column_height * 2 * enemy_body_scale)
                 y_head_top = y_body_top - (Column_height * enemy_head_scale)
-                pygame.draw.line(screen, (0,0,max(0,int(255 - enemyInfo["raytravle"]))), (screen.get_width() // 60 * i, y_body_top+1), (screen.get_width() // 60 * i, y_head_top), screenwidth // 60)
-                break
-                    
+                pygame.draw.line(screen, (max(0,int(255 - enemyInfo["raytravle"])), max(0,int(255 - enemyInfo["raytravle"])), max(0,int(255 - enemyInfo["raytravle"]))), (screen.get_width() // 60 * i, y_body_top+1), (screen.get_width() // 60 * i, y_head_top), screenwidth // 60)
+                break    
 
         ## Movment logic
         pressed = pygame.key.get_pressed()
