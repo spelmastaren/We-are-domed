@@ -99,12 +99,18 @@ class lobby {
                 this.PerpareLobby();
             }
         }
-
+        let enemyPositions = [];
+        for (const enemy of this.enemies) {
+            enemyPositions.push({
+                x: enemy.position.x,
+                y: enemy.position.y
+            });
+        }    
         // Send updated player info to all players in the lobby
         for (const player of this.players) {
             if (player.InGame === true) {
                 if (player.conection.readyState === WebSocket.OPEN) {
-                    player.conection.send(JSON.stringify({ type: "UpdateLocations", data: { players: playerInfos , enemies: this.enemies } }));
+                    player.conection.send(JSON.stringify({ type: "UpdateLocations", data: { players: playerInfos, enemies: enemyPositions } }));
                 } else {
                     console.log("Player connection Missed", player.Username);
                 }
