@@ -307,7 +307,7 @@ class enemy {
     constructor(lobby,position) {
         this.position = position;
         this.target = null;
-        this.speed = playerSpeed * 1.1;
+        this.speed = PlayerSpeed * 1.1;
         this.path = [];
         this.pathIndex = 0;
         this.Lobby = lobby;
