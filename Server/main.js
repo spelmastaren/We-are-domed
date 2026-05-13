@@ -327,7 +327,6 @@ class enemy {
     DumbGoTo(position) {
         const dx = position.x - this.position.x;
         const dy = position.y - this.position.y;
-        console.log("Going");
         if (dx === 0 && dy === 0) return;
         if (dx > 0) {
             this.position.x += this.speed;
@@ -371,7 +370,7 @@ class enemy {
                         this.pathIndex = 0;
                     }
                     this.DumbGoTo({ x: this.path[this.pathIndex].x + 0.5, y: this.path[this.pathIndex].y + 0.5 });
-                    if (this.position.x === this.path[this.pathIndex].x + 0.5 && this.position.y === this.path[this.pathIndex].y + 0.5) {
+                    if (myblock.x === this.path[this.pathIndex].x && myblock.y === this.path[this.pathIndex].y) {
                         this.pathIndex++;
                     }
                 } else {
