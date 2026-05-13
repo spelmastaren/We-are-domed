@@ -348,7 +348,8 @@ class enemy {
         }
         if (this.target != null) {
             const myblock = { x: Math.floor(this.position.x), y: Math.floor(this.position.y) };
-            if (myblock.x === this.targetBlock.x || myblock.y === this.targetBlock.y) {
+            const targetBlock = { x: Math.floor(this.target.position.x), y: Math.floor(this.target.position.y) };
+            if (myblock === targetBlock) {
                 this.DumbGoTo({ x: this.target.position.x, y: this.target.position.y });
             } else {
                 const curentTargetBlock = { x: Math.floor(this.target.position.x), y: Math.floor(this.target.position.y) };
@@ -364,7 +365,7 @@ class enemy {
                 } else {
                     this.path = FindshortestPath(this.Lobby.map, myblock, curentTargetBlock);
                     this.pathIndex = 0;
-                    curentTargetBlock = this.lastBlockToGoTo;
+                    this.lastBlockToGoTo = curentTargetBlock;
                 }
             }
         }
