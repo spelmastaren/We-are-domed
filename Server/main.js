@@ -38,7 +38,7 @@ class lobby {
             while (true) {
                 const spawn = { x: Math.floor(Math.random() * 100), y: Math.floor(Math.random() * 100) };
                 if (this.map[Math.floor(spawn.y)][Math.floor(spawn.x)] === 0 && (spawn.x !== 10 || spawn.y !== 10)) {
-                    Enemy = new enemy(this, goal);
+                    Enemy = new enemy(this, { x: spawn.x + 0.5, y: spawn.y + 0.5 });
                     break;
                 }
             }
