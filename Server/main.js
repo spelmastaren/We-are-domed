@@ -360,11 +360,11 @@ class enemy {
         if (this.target != null) {
             const myblock = { x: Math.floor(this.position.x), y: Math.floor(this.position.y) };
             const targetBlock = { x: Math.floor(this.target.position.x), y: Math.floor(this.target.position.y) };
-            if (myblock === targetBlock) {
+            if (myblock.x === targetBlock.x && myblock.y === targetBlock.y) {
                 this.DumbGoTo({ x: this.target.position.x, y: this.target.position.y });
             } else {
                 const curentTargetBlock = { x: Math.floor(this.target.position.x), y: Math.floor(this.target.position.y) };
-                if (curentTargetBlock === this.lastBlockToGoTo) {
+                if (curentTargetBlock.x === this.lastBlockToGoTo.x && curentTargetBlock.y === this.lastBlockToGoTo.y) {
                     if (this.path.length === 0) {
                         this.path = FindshortestPath(this.Lobby.map, myblock, curentTargetBlock);
                         this.pathIndex = 0;
