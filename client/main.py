@@ -122,6 +122,7 @@ class ServerComnicationHandler():
                     if player["Username"] == self.username:
                         self.LocalPlayerLocation = player["Position"]
                         break
+                print("Locations updated")
                 
 
             ## The server thinks you won the game and this event prints and switshes to a game scen for victory

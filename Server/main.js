@@ -110,7 +110,7 @@ class lobby {
         for (const player of this.players) {
             if (player.InGame === true) {
                 if (player.conection.readyState === WebSocket.OPEN) {
-                    player.conection.send(JSON.stringify({ type: "UpdateLocations", data: { players: playerInfos, enemies: enemyPositions } }));
+                    player.conection.send(JSON.stringify({ type: "UpdateLocations", data: { players: playerInfos, enemyPositions: enemyPositions } }));
                 } else {
                     console.log("Player connection Missed", player.Username);
                 }
@@ -250,7 +250,7 @@ function handelemessage(message,socket) {
         }
     };
     if (messageJSON.type === "UpdateMovementInput") {
-        if (Math.abs(messageJSON.data["x"] * messageJSON.data["y"]) > 0.5) {
+        if (Math.abs(messageJSON.data["x"] * messageJSON.data["y"]) > 0.6) {
             socket.send(JSON.stringify({ type: "error", data: { message: "Movement input out of bounds" } }));
             return;
         }
