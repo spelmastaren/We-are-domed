@@ -322,9 +322,8 @@ class enemy {
         this.path = [];
         this.pathIndex = 0;
         this.Lobby = lobby;
-        this.targetBlock = { x: Math.floor(this.position.x), y: Math.floor(this.position.y)};
+        this.lastBlockToGoTo = { x: 10, y: 10 };
     };
-
     DumbGoTo(position) {
         const dx = position.x - this.position.x;
         const dy = position.y - this.position.y;
@@ -353,7 +352,7 @@ class enemy {
                 this.DumbGoTo({ x: this.target.position.x, y: this.target.position.y });
             } else {
                 const curentTargetBlock = { x: Math.floor(this.target.position.x), y: Math.floor(this.target.position.y) };
-                if (curentTargetBlock.x === this.targetBlock.x || curentTargetBlock.y === this.targetBlock.y) {
+                if (curentTargetBlock === this.lastBlockToGoTo) {
                     if (this.path.length === 0) {
                         this.path = FindshortestPath(this.Lobby.map, myblock, curentTargetBlock);
                         this.pathIndex = 0;
@@ -365,6 +364,7 @@ class enemy {
                 } else {
                     this.path = FindshortestPath(this.Lobby.map, myblock, curentTargetBlock);
                     this.pathIndex = 0;
+                    curentTargetBlock = this.lastBlockToGoTo;
                 }
             }
         }

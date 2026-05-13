@@ -262,7 +262,8 @@ while isRunning:
 
                 ## Cheking for enemys in sight, this is basicly the same as player detection but for enemys, it adds enemys in sight to the Enemys_in_sight list with the distance to the enemy.
                 for enemy in serverhandler.Enemyslocations:
-                    Enemys_in_sight.append({"Enemy": enemy, "dist": n * 0.05 * math.cos(math.radians(i-30)), "raytravle": n})
+                    if int(enemy["x"]*30) == int(x*30) and int(enemy["y"]*30) == int(y*30):
+                        Enemys_in_sight.append({"Enemy": enemy, "dist": n * 0.05 * math.cos(math.radians(i-30)), "raytravle": n})
 
 
                 screenwidth = screen.get_width()
