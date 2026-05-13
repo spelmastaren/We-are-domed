@@ -117,12 +117,12 @@ class ServerComnicationHandler():
             if messageJSON["type"] == "UpdateLocations":
                 gamestate = 4
                 self.Playerlocations = messageJSON["data"]["players"]
+                self.Enemyslocations = messageJSON["data"]["enemyPositions"]
                 for player in self.Playerlocations:
                     if player["Username"] == self.username:
                         self.LocalPlayerLocation = player["Position"]
                         break
-                ## Gets enemys frome server
-                self.Enemyslocations = messageJSON["data"]["enemies"]
+                
 
             ## The server thinks you won the game and this event prints and switshes to a game scen for victory
             if messageJSON["type"] == "Winner":
