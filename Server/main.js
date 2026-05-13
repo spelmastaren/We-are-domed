@@ -349,12 +349,12 @@ class enemy {
         }
         if (this.target != null) {
             const myblock = { x: Math.floor(this.position.x), y: Math.floor(this.position.y) };
-            if myblock.x === this.targetBlock.x || myblock.y === this.targetBlock.y {
+            if (myblock.x === this.targetBlock.x || myblock.y === this.targetBlock.y) {
                 this.dumbGoTo({ x: this.target.position.x, y: this.target.position.y });
             } else {
                 const curentTargetBlock = { x: Math.floor(this.target.position.x), y: Math.floor(this.target.position.y) };
                 if (curentTargetBlock.x === this.targetBlock.x || curentTargetBlock.y === this.targetBlock.y) {
-                    if this.path == null {
+                    if (this.path == null) {
                         this.path = FindshortestPath(this.Lobby.map, myblock, curentTargetBlock);
                         this.pathIndex = 0;
                     }
