@@ -120,6 +120,9 @@ class ServerComnicationHandler():
                     if player["Username"] == self.username:
                         self.LocalPlayerLocation = player["Position"]
                         break
+                ## Gets enemys frome server
+                self.Enemyslocations = messageJSON["data"]["enemies"]
+
             ## The server thinks you won the game and this event prints and switshes to a game scen for victory
             if messageJSON["type"] == "Winner":
                 self.Screnachanching = time.time() + 10
@@ -244,6 +247,7 @@ while isRunning:
             sin = 0.01 * math.sin(rot_i)
             cos = 0.01 * math.cos(rot_i)
             player_in_sight = []
+            Enemys_in_sight = []
             ## Shoots ray 600 uniits forward
             for n in range(500):
                 x += cos
@@ -254,6 +258,10 @@ while isRunning:
                     if player["Username"] != serverhandler.username and int(player["Position"]["x"]*30) == int(x*30) and int(player["Position"]["y"]*30) == int(y*30):
                         player_in_sight.append({"Player": player, "dist": n * 0.05 * math.cos(math.radians(i-30)), "raytravle": n})
 
+                // Cheking for enemys in sight, this is basicly the same as player detection but for enemys, it adds enemys in sight to the Enemys_in_sight list with the distance to the enemy.
+                for enemy in serverhandler.Enemyslocations:
+                    Enemys_in_sight.append({"Enemy": enemy, "dist": n * 0.05 * math.cos(math.radians(i-30)), "raytravle": n})
+
 
                 screenwidth = screen.get_width()
                 ## render somthing as big as a wall if the ray hits a wall, the size of the wall is determined by the distance to the wall, and also makes it darker the further away it is.
@@ -263,9 +271,9 @@ while isRunning:
                     ## Writes the lines for the walls on screan
                     ## value 1 means wall, value 2 means goal, the goal is rendered in a different color to make it easier to see.
                     if Map[int(y)][int(x)] == 1:
-                        pygame.draw.line(screen, (max(0, int(255-n)), max(0,int(255-n)),max(0,int(255-n))), (screen.get_width()//60*i, screen.get_height()//2+Column_height), (screen.get_width()//60*i, screen.get_height()//2-Column_height),screenwidth//60)
+                        pygame.draw.line(screen, (max(0, int(255-n)), max(0,int(255-n)),0)), (screen.get_width()//60*i, screen.get_height()//2+Column_height), (screen.get_width()//60*i, screen.get_height()//2-Column_height),screenwidth//60)
                     elif Map[int(y)][int(x)] == 2:
-                        pygame.draw.line(screen, (max(0, int(255-n)), max(0,int(255-n)),0), (screen.get_width()//60*i, screen.get_height()//2+Column_height), (screen.get_width()//60*i, screen.get_height()//2-Column_height),screenwidth//60)
+                        pygame.draw.line(screen, (0,0,0), (screen.get_width()//60*i, screen.get_height()//2+Column_height), (screen.get_width()//60*i, screen.get_height()//2-Column_height),screenwidth//60)
                     break
 
             ## renders players in sight, the distance is used to make the player smaller the further away they are, and also to make them darker the further away they are.
@@ -280,7 +288,17 @@ while isRunning:
                 y_head_top = y_body_top - (Column_height * player_head_scale)
                 pygame.draw.line(screen, (0, max(0,int(155-playerInfo["raytravle"])), max(0,int(213-playerInfo["raytravle"]))), (screen.get_width() // 60 * i, y_floor), (screen.get_width() // 60 * i, y_body_top), screenwidth // 60)
                 pygame.draw.line(screen, (max(0,int(255 - playerInfo["raytravle"])), 0, 0), (screen.get_width() // 60 * i, y_body_top+1), (screen.get_width() // 60 * i, y_head_top), screenwidth // 60)
-                 
+                break
+
+            for enemyInfo in Enemys_in_sight:
+                dist = enemyInfo["dist"]
+                Column_height = (screen.get_height() / (dist + 0.000001)) / 2
+                enemy_body_scale = 0.4
+                enemy_head_scale = 0.3
+                y_floor = screen.get_height() // 2 + Column_height
+                y_body_top = y_floor - (Column_height * 2 * enemy_body_scale)
+                y_head_top = y_body_top - (Column_height * enemy_head_scale)
+                pygame.draw.line(screen, (0,0,max(0,int(255 - enemyInfo["raytravle"]))), (screen.get_width() // 60 * i, y_body_top+1), (screen.get_width() // 60 * i, y_head_top), screenwidth // 60)
                 break
                     
 
@@ -312,7 +330,6 @@ while isRunning:
             Rotation += (math.pi/800) * dt * 500
         elif pressed[pygame.K_a]:
             Rotation -= (math.pi/800) * dt * 500
-        print(dt)
         
     ## You won the game if you reach the goal, gamestate 5 is the win screen.
     if gamestate == 5:

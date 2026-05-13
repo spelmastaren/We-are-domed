@@ -11,19 +11,39 @@ let players = new Map();
 
 class lobby {
     constructor(name) {
-        // Genererar och avgör om det är möjligt att klara den
-        let [map, goal] = randomizemap();
-        while (FindshortestPath(map, { x: 10, y: 10 }, { x: goal.x, y: goal.y }) == null) {
-            [map, goal] = randomizemap();
-        };
-        console.log("Lobby created with ID:", name, "and goal at:", goal);
-        this.map = map;
+        this.map = null;
         this.ID = name;
         this.players = [];
         this.open = true;
         this.Interval = null;
         this.sholdChekIfendGame = false;
+        this.enemies = [];
+        console.log("Lobby created with ID:", name);
     };
+
+    PerpareLobby() {
+        // Genererar och avgör om det är möjligt att klara den
+        let [map, goal] = randomizemap();
+        while (FindshortestPath(map, { x: 10, y: 10 }, { x: goal.x, y: goal.y }) == null) {
+            [map, goal] = randomizemap();
+        };
+        map[10][10] = 0;
+        console.log("Lobby Map Prepared with ID:", name, "and goal at:", goal);
+        this.map = map;
+
+        // Spawn Enemies
+        for (let i = 0; i < 10; i++) {
+            while (true) {
+                const spawn = { x: Math.floor(Math.random() * 100), y: Math.floor(Math.random() * 100) };
+                if (this.map[Math.floor(spawn.y)][Math.floor(spawn.x)] === 0 && (spawn.x !== 10 || spawn.y !== 10)) {
+                    Enemy = new enemy(this, spawn);
+                    break;
+                }
+            }
+            this.enemies.push(Enemy);
+        }
+        console.log("Lobby with ID:", name, " have enemies spawned redy and hungry for players to hunt");
+    }
 
     GameUpdate() {
         // makes a list with all player names and positions
@@ -34,6 +54,11 @@ class lobby {
                         player.InGame = false;
                         console.log("Player", player.Username, "has reached the goal and won the game!");
                         player.conection.send(JSON.stringify({ type: "Winner", data: {} }));
+                        this.sholdChekIfendGame = true;
+                    } else if (Math.floor(enemy.position.x * 100) === Math.floor(player.position.x * 100) && Math.floor(enemy.position.y * 100) === Math.floor(player.position.y * 100)) {
+                        player.InGame = false;
+                        console.log("Enemy has eaten player", player.Username, "in lobby with ID:", this.ID);
+                        player.conection.send(JSON.stringify({ type: "Caught", data: {} }));
                         this.sholdChekIfendGame = true;
                     }
 
@@ -47,7 +72,10 @@ class lobby {
                 });
             }
         }
-        
+        for (const enemy of this.enemies) {
+            enemy.GameUpdate();
+        }
+
         if (this.sholdChekIfendGame) {
             this.sholdChekIfendGame = false;
             let NonePlayersLeft = true;
@@ -62,11 +90,7 @@ class lobby {
                 clearInterval(this.Interval);
                 this.Interval = null;
                 this.open = true;
-                let [map, goal] = randomizemap();
-                while (FindshortestPath(map, { x: 10, y: 10 }, { x: goal.x, y: goal.y }) == null) {
-                    [map, goal] = randomizemap();
-                };
-                this.map = map;
+                this.PerpareLobby();
             }
         }
 
@@ -74,7 +98,7 @@ class lobby {
         for (const player of this.players) {
             if (player.InGame === true) {
                 if (player.conection.readyState === WebSocket.OPEN) {
-                    player.conection.send(JSON.stringify({ type: "UpdateLocations", data: { players: playerInfos } }));
+                    player.conection.send(JSON.stringify({ type: "UpdateLocations", data: { players: playerInfos , enemies: this.enemies } }));
                 } else {
                     console.log("Player connection Missed", player.Username);
                 }
@@ -279,10 +303,59 @@ class player {
 };
 
 class enemy {
-    constructor() {
-        this.position = { x: 0, y: 0 };
+    constructor(lobby,position) {
+        this.position = position;
+        this.target = null;
+        this.speed = playerSpeed * 1.1;
+        this.path = [];
+        this.pathIndex = 0;
+        this.Lobby = lobby;
+        this.targetBlock = { x: Math.floor(this.target.position.x), y: Math.floor(this.target.position.y)};
     };
-};
+
+    DumbGoTo(position) {
+        const dx = position.x - this.position.x;
+        const dy = position.y - this.position.y;
+        this.position.x += Math.max(-1, Math.min(1, dx)) * this.speed;
+        this.position.y += Math.max(-1, Math.min(1, dy)) * this.speed;
+    }
+
+    GameUpdate() {
+        if (this.target == null || this.target.InGame === false) {
+            let closestPlayer = null;
+            let closestDistance = Infinity;
+            for (const player of this.Lobby.players) {
+                if (player.InGame === true) {
+                    const distance = Math.sqrt((player.position.x - this.position.x) ** 2 + (player.position.y - this.position.y) ** 2);
+                    if (distance < closestDistance) {
+                        closestDistance = distance;
+                        closestPlayer = player;
+                    }
+                }
+            }
+            this.target = closestPlayer;
+        }
+        if (this.target != null) {
+            if (Math.floor(this.target.position.x) !== this.targetBlock.x || Math.floor(this.target.position.y) !== this.targetBlock.y) {
+                if (Math.floor(this.position.x) === this.player.position.x && Math.floor(this.position.y) === this.player.position.y) {
+                    this.DumbGoTo(this.target.position);
+                } else {
+                    this.targetBlock = { x: Math.floor(this.target.position.x), y: Math.floor(this.target.position.y)};
+                    this.path = FindshortestPath(this.Lobby.map, { x: Math.floor(this.position.x), y: Math.floor(this.position.y) }, this.targetBlock);
+                    if (this.path == null) {
+                        this.target = null;
+                        this.pathIndex = 0;
+                    }
+                }
+            } else {
+                this.DumbGoTo(this.path[this.pathIndex]);
+                if (Math.floor(this.position.x) === this.path[this.pathIndex].x && Math.floor(this.position.y) === this.path[this.pathIndex].y) {
+                    this.pathIndex++;
+                }
+            }
+        }
+    };
+}
 
 wss.on("listening", () => {
     console.log("Server is sucsessfully started and redy to accept connections");
