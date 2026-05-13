@@ -340,6 +340,7 @@ class enemy {
         if (dy < 0) {
             this.position.y -= this.speed;
         }
+        console.log("Going");
     }
 
     GameUpdate() {
