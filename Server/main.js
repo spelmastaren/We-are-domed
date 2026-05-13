@@ -335,6 +335,7 @@ class enemy {
                 }
             }
             this.target = closestPlayer;
+            this.target = closestPlayer;
         }
         if (this.target != null) {
             if (Math.floor(this.target.position.x) !== this.targetBlock.x || Math.floor(this.target.position.y) !== this.targetBlock.y) {
