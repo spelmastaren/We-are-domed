@@ -348,21 +348,23 @@ class enemy {
             this.target = closestPlayer;
         }
         if (this.target != null) {
-            if (Math.floor(this.target.position.x) !== this.targetBlock.x || Math.floor(this.target.position.y) !== this.targetBlock.y) {
-                if (Math.floor(this.position.x) === this.target.position.x && Math.floor(this.position.y) === this.target.position.y) {
-                    this.DumbGoTo(this.target.position);
-                } else {
-                    this.targetBlock = { x: Math.floor(this.target.position.x), y: Math.floor(this.target.position.y)};
-                    this.path = FindshortestPath(this.Lobby.map, { x: Math.floor(this.position.x), y: Math.floor(this.position.y) }, this.targetBlock);
-                    if (this.path == null) {
-                        this.target = null;
+            const myblock = { x: Math.floor(this.position.x), y: Math.floor(this.position.y) };
+            if myblock.x === this.targetBlock.x || myblock.y !== this.targetBlock.y {
+                this.dumbGoTo({ x: this.target.position.x, y: this.target.position.y });
+            } else {
+                const curentTargetBlock = { x: Math.floor(this.target.position.x), y: Math.floor(this.target.position.y) };
+                if (curentTargetBlock.x === this.targetBlock.x || curentTargetBlock.y === this.targetBlock.y) {
+                    if this.path == null {
+                        this.path = FindshortestPath(this.Lobby.map, myblock, curentTargetBlock);
                         this.pathIndex = 0;
                     }
-                }
-            } else {
-                this.DumbGoTo(this.path[this.pathIndex]);
-                if (Math.floor(this.position.x) === this.path[this.pathIndex].x && Math.floor(this.position.y) === this.path[this.pathIndex].y) {
-                    this.pathIndex++;
+                    this.dumbGoTo({ x: this.path[this.pathIndex].x + 0.5, y: this.path[this.pathIndex].y + 0.5 });
+                    if (this.position.x === this.path[this.pathIndex].x + 0.5 && this.position.y === this.path[this.pathIndex].y + 0.5) {
+                        this.pathIndex++;
+                    }
+                } else {
+                    this.path = FindshortestPath(this.Lobby.map, myblock, curentTargetBlock);
+                    this.pathIndex = 0;
                 }
             }
         }
