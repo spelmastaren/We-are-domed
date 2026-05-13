@@ -366,13 +366,15 @@ class enemy {
             } else {
                 const curentTargetBlock = { x: Math.floor(this.target.position.x), y: Math.floor(this.target.position.y) };
                 if (curentTargetBlock.x === this.lastBlockToGoTo.x && curentTargetBlock.y === this.lastBlockToGoTo.y) {
-                    if (this.path == null || this.path.length === 0) {
+                    if (this.path == null || this.path.length === 0 && this.lastBlockToGoTo.x === curentTargetBlock.x && this.lastBlockToGoTo.y === curentTargetBlock.y) {
                         this.path = FindshortestPath(this.Lobby.map, myblock, curentTargetBlock);
-                        if (this.path == null || this.path.length === 0) {
-                            return
-                        };
                         this.pathIndex = 0;
+                        this.lastBlockToGoTo.x = curentTargetBlock.x;
+                        this.lastBlockToGoTo.y = curentTargetBlock.y;
                     }
+                    if (this.path == null || this.path.length === 0) {
+                        return
+                    };
                     this.DumbGoTo({ x: this.path[this.pathIndex].x + 0.5, y: this.path[this.pathIndex].y + 0.5 });
                     if (myblock.x === this.path[this.pathIndex].x && myblock.y === this.path[this.pathIndex].y) {
                         this.pathIndex++;
