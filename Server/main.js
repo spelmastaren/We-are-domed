@@ -350,7 +350,7 @@ class enemy {
         if (this.target != null) {
             const myblock = { x: Math.floor(this.position.x), y: Math.floor(this.position.y) };
             if (myblock.x === this.targetBlock.x || myblock.y === this.targetBlock.y) {
-                this.dumbGoTo({ x: this.target.position.x, y: this.target.position.y });
+                this.DumbGoTo({ x: this.target.position.x, y: this.target.position.y });
             } else {
                 const curentTargetBlock = { x: Math.floor(this.target.position.x), y: Math.floor(this.target.position.y) };
                 if (curentTargetBlock.x === this.targetBlock.x || curentTargetBlock.y === this.targetBlock.y) {
@@ -358,7 +358,7 @@ class enemy {
                         this.path = FindshortestPath(this.Lobby.map, myblock, curentTargetBlock);
                         this.pathIndex = 0;
                     }
-                    this.dumbGoTo({ x: this.path[this.pathIndex].x + 0.5, y: this.path[this.pathIndex].y + 0.5 });
+                    this.DumbGoTo({ x: this.path[this.pathIndex].x + 0.5, y: this.path[this.pathIndex].y + 0.5 });
                     if (this.position.x === this.path[this.pathIndex].x + 0.5 && this.position.y === this.path[this.pathIndex].y + 0.5) {
                         this.pathIndex++;
                     }
