@@ -327,8 +327,19 @@ class enemy {
     DumbGoTo(position) {
         const dx = position.x - this.position.x;
         const dy = position.y - this.position.y;
-        this.position.x += Math.max(-1, Math.min(1, dx)) * this.speed;
-        this.position.y += Math.max(-1, Math.min(1, dy)) * this.speed;
+        if (dx === 0 && dy === 0) return;
+        if (dx > 0) {
+            this.position.x += this.speed;
+        }
+        if (dx < 0) {
+            this.position.x -= this.speed;
+        }
+        if (dy > 0) {
+            this.position.y += this.speed;
+        }
+        if (dy < 0) {
+            this.position.y -= this.speed;
+        }
     }
 
     GameUpdate() {
