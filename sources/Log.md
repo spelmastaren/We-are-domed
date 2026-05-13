@@ -51,3 +51,6 @@ I denna uppdatering så har jag suttit i ett långt tag med att koda A* algoritm
 
 2026-05-05 Hemma
 Denna gång lade jag till delta time så att alla upptäcker en likadan experiens när det spelar i hur fort kameran rör sig. Med denna revlesionerande funktion kan alla oavsätt 90 tals eller 2040 dator så kan alla roterar i samma hastighet.
+
+2026-05-13-Hela-dagen
+IDag så lade jag till vita drönare som jagar spelaren och om de fungerar som det ska så förlorar spelaren o0m de nudar drönaren. De rör sig 10% snabare än spelaren och har path finding för att hitta till spelaren och om det är nära nog så går det utan A* och rakt till spelaren. Jag ska snart göra att spelaren kan ta emot en felust och rita det på skärmen men det finns änu inte.
