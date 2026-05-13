@@ -19,10 +19,15 @@ class lobby {
         this.sholdChekIfendGame = false;
         this.enemies = [];
         console.log("Lobby created with ID:", name);
-        this.PerpareLobby();
     };
 
     PerpareLobby() {
+        for (const player of this.players) {
+            player.position = { x: 10.5, y: 10.5 };
+            player.currentInput = { x: 0, y: 0};
+            player.InGame = false;
+        };
+        console.log("Lobby with ID:", this.ID, " have all players reset and redy");
         this.enemies = [];
         // Genererar och avgör om det är möjligt att klara den
         let [map, goal] = randomizemap();
@@ -97,7 +102,6 @@ class lobby {
                 clearInterval(this.Interval);
                 this.Interval = null;
                 this.open = true;
-                this.PerpareLobby();
             }
         }
         let enemyPositions = [];
@@ -239,6 +243,7 @@ function handelemessage(message,socket) {
             return;
         } else {
             lobby.open = false;
+            lobby.PerpareLobby();
             for (const player of lobby.players) {
                 player.InGame = true;
                 if (player.conection.readyState === ws.OPEN) {
