@@ -33,6 +33,7 @@ class lobby {
         this.map = map;
 
         // Spawn Enemies
+        let Enemy = null;
         for (let i = 0; i < 10; i++) {
             while (true) {
                 const spawn = { x: Math.floor(Math.random() * 100), y: Math.floor(Math.random() * 100) };
