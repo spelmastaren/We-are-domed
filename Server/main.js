@@ -264,7 +264,7 @@ function handelemessage(message,socket) {
         }
     };
     if (messageJSON.type === "UpdateMovementInput") {
-        if (Math.abs(messageJSON.data["x"]) > 1 || Math.abs(messageJSON.data["y"]) > 1) {
+        if (Math.abs(messageJSON.data["x"]) >= 1 || Math.abs(messageJSON.data["y"]) >= 1) {
             socket.send(JSON.stringify({ type: "error", data: { message: "Movement input out of bounds" } }));
             return;
         } else if (messageJSON.data["x"] === player.currentInput.x || messageJSON.data["y"] === player.currentInput.y) {
