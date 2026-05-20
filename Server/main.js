@@ -53,6 +53,21 @@ class lobby {
         console.log("Lobby with ID:", this.ID, " have enemies spawned redy and hungry for players to hunt");
     }
 
+    startGame() {
+        for (const player of this.players) {
+            player.InGame = true;
+            if (player.conection.readyState === ws.OPEN) {
+                player.conection.send(JSON.stringify({ type: "GameStarted", data: { map: this.map } }));
+            } else {
+                player.conection.close();
+            }
+        }
+        this.Interval = setInterval(() => this.GameUpdate(), 50);
+        for (const Enemy of this.enemies) {
+            Enemy.Interval = setInterval(() => Enemy.GameUpdate(), 50);
+        }
+    }
+
     GameUpdate() {
         // makes a list with all player names and positions
         let playerInfos = [];
@@ -84,9 +99,6 @@ class lobby {
                 });
             }
         }
-        for (const enemy of this.enemies) {
-            enemy.GameUpdate();
-        }
 
         if (this.sholdChekIfendGame) {
             this.sholdChekIfendGame = false;
@@ -100,6 +112,10 @@ class lobby {
             if (NonePlayersLeft == true) {
                 console.log("Game ended in lobby with ID:", this.ID);
                 clearInterval(this.Interval);
+                for (const Enemy of this.enemies) {
+                    clearInterval(Enemy.Interval);
+                    Enemy.Interval = null;
+                }
                 this.Interval = null;
                 this.open = true;
             }
@@ -244,15 +260,6 @@ function handelemessage(message,socket) {
         } else {
             lobby.open = false;
             lobby.PerpareLobby();
-            for (const player of lobby.players) {
-                player.InGame = true;
-                if (player.conection.readyState === ws.OPEN) {
-                    player.conection.send(JSON.stringify({ type: "GameStarted", data: { map: lobby.map } }));
-                } else {
-                    player.conection.close();
-                }
-            }
-            lobby.Interval = setInterval(() => lobby.GameUpdate(), 50);
         }
     };
     if (messageJSON.type === "UpdateMovementInput") {
@@ -330,6 +337,7 @@ class enemy {
         this.Lobby = lobby;
         this.lastBlockToGoTo = { x: 10, y: 10 };
         this.cantGoTo = [];
+        this.Interval = null;
     };
     DumbGoTo(position) {
         const dx = position.x - this.position.x;
