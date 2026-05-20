@@ -202,7 +202,7 @@ while isRunning:
         if serverhandler == None:
             serverhandler = ServerComnicationHandler()
         if serverhandler.Connected:
-            gamestate = 1
+            gamestate = 1.5
 
     ## Connection Faild for some reason, could be server down or no internet connection.
     if gamestate == -1:
@@ -210,10 +210,11 @@ while isRunning:
         screen.blit(pygame.font.SysFont("Arial", 30).render("Failed to connect to server.", True, (0, 0, 0)), (screen.get_width() // 2 - 125, screen.get_height() // 2 - 15))
         pygame.display.flip()
 
+
     ## Connected but not in a lobby or started game yet.
     if gamestate == 1:
         screen.fill((255, 255, 0))
-        screen.blit(pygame.font.SysFont("Arial", 30).render(f"Loged in as {serverhandler.username}", True, (0, 0, 0)), (30, 30))
+        screen.blit(pygame.font.SysFont("Arial", 30).render("We are dommed", True, (0, 0, 0)), (30, 30))
         pygame.draw.rect(screen, (0, 255, 0), (0, 70, screen.get_width()//4 * 3, screen.get_height()-70))
         for i, lobby in enumerate(serverhandler.lobbys):
             pygame.draw.rect(screen, (255, 0, 0), (0, 80 + i*40, screen.get_width()//4 * 3, 40))
@@ -227,6 +228,12 @@ while isRunning:
             if pygame.font.Font.size(text,"Create Lobby")[0] < screen.get_width()//4 - 20:
                 break
         screen.blit(text.render("Create Lobby", True, (0, 0, 0)), (screen.get_width()//4 * 3 + 10, (screen.get_height()+70) // 2))
+        text = pygame.font.SysFont("Arial", 30)
+        for i in range(30):
+            text = pygame.font.SysFont("Arial", 30-i)
+            if pygame.font.Font.size(text,f"Loged in as {serverhandler.username}")[0] < screen.get_width()//4 - 20:
+                break
+        screen.blit(text.render(f"Loged in as {serverhandler.username}", True, (0, 0, 0)), (screen.get_width()//4 * 3 + 10, 80))
         pygame.display.flip()
 
     ## gamestate 3 is the game state when you are in a lobby waiting for the game to start.
