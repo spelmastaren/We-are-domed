@@ -260,6 +260,7 @@ function handelemessage(message,socket) {
         } else {
             lobby.open = false;
             lobby.PerpareLobby();
+            lobby.startGame();
         }
     };
     if (messageJSON.type === "UpdateMovementInput") {
