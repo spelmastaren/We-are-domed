@@ -266,10 +266,12 @@ function handelemessage(message,socket) {
     if (messageJSON.type === "UpdateMovementInput") {
         if (Math.abs(messageJSON.data["x"]) >= 1 || Math.abs(messageJSON.data["y"]) >= 1) {
             socket.send(JSON.stringify({ type: "error", data: { message: "HAcking detected: Movement input out of bounds" } }));
+            console.log("Player", player.Username, "sent movement input out of bounds, possible hacking attempt detected, disconnecting player");
             socket.close();
             return;
         } else if (messageJSON.data["x"] === player.currentInput.x || messageJSON.data["y"] === player.currentInput.y) {
             socket.send(JSON.stringify({ type: "error", data: { message: "Hacking Detected: Movement input unchanged are you hacking?" } }));
+            console.log("Player", player.Username, "sent unchanged movement input, possible hacking attempt detected, disconnecting player");
             socket.close();
             return
         }
