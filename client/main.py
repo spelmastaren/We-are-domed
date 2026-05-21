@@ -152,7 +152,7 @@ class ServerComnicationHandler():
 
 
 pygame.init()
-pygame.display.set_caption("We are domed")
+pygame.display.set_caption("We are doomed")
 screen = pygame.display.set_mode((500, 500), pygame.RESIZABLE)
 
 
@@ -214,7 +214,7 @@ while isRunning:
     ## Connected but not in a lobby or started game yet.
     if gamestate == 1:
         screen.fill((255, 255, 0))
-        screen.blit(pygame.font.SysFont("Arial", 30).render("We are dommed", True, (0, 0, 0)), (30, 30))
+        screen.blit(pygame.font.SysFont("Arial", 30).render("We are doomed", True, (0, 0, 0)), (30, 30))
         pygame.draw.rect(screen, (0, 255, 0), (0, 70, screen.get_width()//4 * 3, screen.get_height()-70))
         for i, lobby in enumerate(serverhandler.lobbys):
             pygame.draw.rect(screen, (255, 0, 0), (0, 80 + i*40, screen.get_width()//4 * 3, 40))
