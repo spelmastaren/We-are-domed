@@ -56,6 +56,7 @@ class lobby {
     startGame() {
         for (const player of this.players) {
             player.InGame = true;
+            player.HasMovedInCurrentGame = false;
             if (player.conection.readyState === ws.OPEN) {
                 player.conection.send(JSON.stringify({ type: "GameStarted", data: { map: this.map } }));
             } else {
@@ -266,15 +267,16 @@ function handelemessage(message,socket) {
     if (messageJSON.type === "UpdateMovementInput") {
         if (Math.abs(messageJSON.data["x"]) >= 1 || Math.abs(messageJSON.data["y"]) >= 1) {
             socket.send(JSON.stringify({ type: "error", data: { message: "HAcking detected: Movement input out of bounds" } }));
-            console.log("Player", player.Username, "sent movement input out of bounds, possible hacking attempt detected, disconnecting player");
+            console.log(player.Username, "sent movement input out of bounds, possible hacking attempt detected, disconnecting player");
             socket.close();
             return;
-        } else if (messageJSON.data["x"] === player.currentInput.x || messageJSON.data["y"] === player.currentInput.y) {
+        } else if ((messageJSON.data["x"] === player.currentInput.x || messageJSON.data["y"] === player.currentInput.y) && player.HasMovedInCurrentGame) {
             socket.send(JSON.stringify({ type: "error", data: { message: "Hacking Detected: Movement input unchanged are you hacking?" } }));
-            console.log("Player", player.Username, "sent unchanged movement input, possible hacking attempt detected, disconnecting player");
+            console.log(player.Username, "sent unchanged movement input, possible hacking attempt detected, disconnecting player");
             socket.close();
             return
         }
+        player.HasMovedInCurrentGame = true;
         player.currentInput.x = messageJSON.data["x"];
         player.currentInput.y = messageJSON.data["y"];
     }
@@ -332,6 +334,7 @@ class player {
         this.currentInput = { x: 0, y: 0};
         this.InGame = false;
         this.conection = socket;
+        this.HasMovedInCurrentGame = false;
     };
 };
 
