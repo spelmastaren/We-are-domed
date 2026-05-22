@@ -20,7 +20,14 @@ class ServerPacekt(Generic[T]):
     type: str
     data: T
 
-
+def Rezistext(text, textWidth, font_name="Arial", max_font_size=30):
+    Taxtval = pygame.font.SysFont("Arial", max_font_size)
+    for i in range(max_font_size):
+        Taxtval = pygame.font.SysFont("Arial", max_font_size-i)
+        if pygame.font.Font.size(Taxtval, text)[0] < textWidth:
+            break
+    return Taxtval
+    
 
 class ServerComnicationHandler():
     print("Server Communication Handler Initialized")
@@ -106,8 +113,9 @@ class ServerComnicationHandler():
                 print("Error from server:", Paket.data["message"])
             ## When we need to know what lobbys we can join this gets triggered to update that info
             if Paket.type == "AvailebaleLobbys":
-                self.lobbys = Paket.data["lobbys"]
-                gamestate = 1
+                if time.time() > serverhandler.Screnachanching:
+                    self.lobbys = Paket.data["lobbys"]
+                    gamestate = 1
             ## When we are in a lobby this updates the information about the lobby like who is in it and if we can start the game or not and the lobby id
             if Paket.type == "LobbyInfo":
                 self.players = Paket.data["Players"]
@@ -156,6 +164,7 @@ pygame.display.set_caption("We are doomed")
 screen = pygame.display.set_mode((500, 500), pygame.RESIZABLE)
 
 
+
 serverhandler = None
 isRunning = True
 lastTime = time.time()
@@ -172,15 +181,21 @@ while isRunning:
                 break
         if event.type == pygame.MOUSEBUTTONDOWN:
             mouse_pos = pygame.mouse.get_pos()
-            if gamestate != 4:
-                print("Mouse clicked at:", mouse_pos)
             if gamestate == -1:
                 break
             if gamestate == 1:
-                if screen.get_width()//4 * 3 < mouse_pos[0] < screen.get_width() and (screen.get_height()+70) // 2 < mouse_pos[1] < screen.get_height():
+                if screen.get_width()//4 * 3 < mouse_pos[0] < screen.get_width() and (screen.get_height()//5)*4 < mouse_pos[1] < screen.get_height():
                     print("Create lobby button clicked")
                     serverhandler.CreateLobby()
                 
+                if screen.get_width()//4 * 3 < mouse_pos[0] < screen.get_width() and (screen.get_height()//5)*3 < mouse_pos[1] < (screen.get_height()//5)*4:
+                    print("Controls button clicked")
+                    gamestate = 6
+                    
+                if screen.get_width()//4 * 3 < mouse_pos[0] < screen.get_width() and (screen.get_height()//5)*2 < mouse_pos[1] < (screen.get_height()//5)*3:
+                    print("Story button clicked")  
+                    gamestate = 7
+
                 for i, lobby in enumerate(serverhandler.lobbys):
                     if 0 < mouse_pos[0] < screen.get_width()//4 * 3 and 80 + i*40 < mouse_pos[1] < 100 + i*40:
                         print(f"Lobby {lobby['lobbyID']} clicked")
@@ -193,6 +208,10 @@ while isRunning:
                 if screen.get_width()//2 < mouse_pos[0] < screen.get_width() and screen.get_height() - 40 < mouse_pos[1] < screen.get_height():
                     print("Leave lobby button clicked")
                     serverhandler.LeaveLobby()
+            if gamestate == 6 or gamestate == 7:
+                if 0 < mouse_pos[0] < screen.get_width() and screen.get_height() - 40 < mouse_pos[1] < screen.get_height():
+                    print("Back button clicked")
+                    gamestate = 1
     
     ## gamestate 1 Not Yet Connected to a server, but trying to connect.
     if gamestate == 0:
@@ -220,20 +239,19 @@ while isRunning:
             pygame.draw.rect(screen, (255, 0, 0), (0, 80 + i*40, screen.get_width()//4 * 3, 40))
             screen.blit(pygame.font.SysFont("Arial", 30).render(str(lobby["lobbyID"]), True, (0, 0, 0)), (5, 80 + i*20))
 
-        pygame.draw.rect(screen, (0, 0, 255), (screen.get_width()//4 * 3, 70, screen.get_width()//4, (screen.get_height()-70) // 2))
-        pygame.draw.rect(screen, (255, 0, 255), (screen.get_width()//4 * 3, (screen.get_height()+70) // 2, screen.get_width()//4, (screen.get_height()-70) // 2))
-        text = pygame.font.SysFont("Arial", 30)
-        for i in range(30):
-            text = pygame.font.SysFont("Arial", 30-i)
-            if pygame.font.Font.size(text,"Create Lobby")[0] < screen.get_width()//4 - 20:
-                break
-        screen.blit(text.render("Create Lobby", True, (0, 0, 0)), (screen.get_width()//4 * 3 + 10, (screen.get_height()+70) // 2))
-        text = pygame.font.SysFont("Arial", 30)
-        for i in range(30):
-            text = pygame.font.SysFont("Arial", 30-i)
-            if pygame.font.Font.size(text,f"Loged in as {serverhandler.username}")[0] < screen.get_width()//4 - 20:
-                break
+        pygame.draw.rect(screen, (255, 255, 0), (screen.get_width()//4 * 3, screen.get_height()//5, screen.get_width()//4, (screen.get_height()-70) // 5))
+        pygame.draw.rect(screen, (0, 122, 255), (screen.get_width()//4 * 3, (screen.get_height()//5)*3, screen.get_width()//4, (screen.get_height()) // 5))
+        pygame.draw.rect(screen, (255, 0, 255), (screen.get_width()//4 * 3, (screen.get_height()//5)*4, screen.get_width()//4, (screen.get_height()) // 5))
+        pygame.draw.rect(screen, (255, 127, 80), (screen.get_width()//4 * 3, (screen.get_height()//5)*2, screen.get_width()//4, (screen.get_height()) // 5))
+        text = Rezistext(f"Create Lobby", screen.get_width()//4 - 20, "Arial", 30)
+        text = Rezistext(f"Create Lobby", screen.get_width()//4 - 20, "Arial", 30)
+        screen.blit(text.render("Create Lobby", True, (0, 0, 0)), (screen.get_width()//4 * 3 + 10, ((screen.get_height()) // 5)*4+10))
+        text = Rezistext(f"Loged in as {serverhandler.username}", screen.get_width()//4 - 20, "Arial", 30)
         screen.blit(text.render(f"Loged in as {serverhandler.username}", True, (0, 0, 0)), (screen.get_width()//4 * 3 + 10, 80))
+        text = Rezistext(f"Controls", screen.get_width()//4 - 20, "Arial", 30)
+        screen.blit(text.render("Controls", True, (0, 0, 0)), (screen.get_width()//4 * 3 + 10, ((screen.get_height()) // 5)*3+10))
+        text = Rezistext(f"Story", screen.get_width()//4 - 20, "Arial", 30)
+        screen.blit(text.render("Story", True, (0, 0, 0)), (screen.get_width()//4 * 3 + 10, ((screen.get_height()) // 5)*2+10))
         pygame.display.flip()
 
     ## gamestate 3 is the game state when you are in a lobby waiting for the game to start.
@@ -362,6 +380,28 @@ while isRunning:
         screen.fill((255, 0, 0))
         screen.blit(pygame.font.SysFont("Arial", 30).render("You are dommed and dead", True, (0, 0, 0)), (screen.get_width() // 2 - 125, screen.get_height() // 2 - 15))
         pygame.display.flip()    
+
+    if gamestate == 6:
+        serverhandler.Screnachanching = time.time() + 1
+        screen.fill((255, 255, 255))
+        Conntrolstext = ["W - Move forward", "S - Move backward", "A - Turn left", "D - Turn right","---------------------","Navigate in menus with the mouse"]
+        for i,v in enumerate(Conntrolstext):
+            text = Rezistext(v, screen.get_width() - 20, "Arial", 30)
+            screen.blit(text.render(v, True, (0, 0, 0)), (10, (i*30+20)))
+        pygame.draw.rect(screen, (255, 0, 0), (0, screen.get_height() - 40, screen.get_width(), 40))
+        screen.blit(pygame.font.SysFont("Arial", 30).render("Back", True, (0, 0, 0)), (5, screen.get_height() - 35))
+        pygame.display.flip()
+    
+    if gamestate == 7:
+        serverhandler.Screnachanching = time.time() + 1
+        screen.fill((255, 255, 255))
+        Storytext = ["You have just turned off an evil AI.", "But when you did you discovered", "that it was a timer on shutdown.", "The AI have deployed evil drones", "to kill you before the shutdown.", "You have to escape before the drones arrive.", "Find the black exit and go into it.", "Then you win and have shutdown the AI."]
+        for i,v in enumerate(Storytext):
+            text = Rezistext(v, screen.get_width() - 20, "Arial", 30)
+            screen.blit(text.render(v, True, (0, 0, 0)), (10, (i*30+20)))
+        pygame.draw.rect(screen, (255, 0, 0), (0, screen.get_height() - 40, screen.get_width(), 40))
+        screen.blit(pygame.font.SysFont("Arial", 30).render("Back", True, (0, 0, 0)), (5, screen.get_height() - 35))
+        pygame.display.flip()
 
         
 
