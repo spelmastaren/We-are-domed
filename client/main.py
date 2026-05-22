@@ -383,7 +383,7 @@ while isRunning:
 
     if gamestate == 6:
         serverhandler.Screnachanching = time.time() + 1
-        screen.fill((255, 255, 255))
+        screen.fill((0, 255, 0))
         Conntrolstext = ["W - Move forward", "S - Move backward", "A - Turn left", "D - Turn right","---------------------","Navigate in menus with the mouse"]
         for i,v in enumerate(Conntrolstext):
             text = Rezistext(v, screen.get_width() - 20, "Arial", 30)
@@ -394,7 +394,7 @@ while isRunning:
     
     if gamestate == 7:
         serverhandler.Screnachanching = time.time() + 1
-        screen.fill((255, 255, 255))
+        screen.fill((0, 255, 0))
         Storytext = ["You have just turned off an evil AI.", "But when you did you discovered", "that it was a timer on shutdown.", "The AI have deployed evil drones", "to kill you before the shutdown.", "You have to escape before the drones arrive.", "Find the black exit and go into it.", "Then you win and have shutdown the AI."]
         for i,v in enumerate(Storytext):
             text = Rezistext(v, screen.get_width() - 20, "Arial", 30)

@@ -55,5 +55,8 @@ Denna gång lade jag till delta time så att alla upptäcker en likadan experien
 2026-05-13-Hela-dagen
 Idag så lade jag till vita drönare som jagar spelaren och om de fungerar som det ska så förlorar spelaren o0m de nudar drönaren. De rör sig 10% snabare än spelaren och har path finding för att hitta till spelaren och om det är nära nog så går det utan A* och rakt till spelaren. Jag ska snart göra att spelaren kan ta emot en felust och rita det på skärmen men det finns änu inte. Jag har också flyttat så att allt som behöver förbredas innan spelet startar förbreds derekt när man trycker på start och sedan trycker in dig i spelet.
 
-2026-05-20-
+2026-05-20-Programeringslektionen & Engelska
 Denna lektionen lade jag till generics i mitt spel genom att göra server data till generic eftersom jag inte vet vad den kommer inehålla utan att kolla type på paketet. Entiteterna har fått en egen update loop som kör separat ifrån players updateloop så det kan göra A* när det behöver utan att lagga alla andra spelare poch skapa en obehaglig spelupplevelse. Nu kan de gå och tänka hur mycket det vill själva. På main skärmen har jag även ändrat lite gran så att texten där det stod loged in as player ### står det nu spelets namn och player texten har flyttats ner till blå knapliknande sak men ska nog ta borts helt och hållet.
+
+2026-05-22-Hamma
+Under denna sektion lade jag till en funktion som gör om mina texter till en stolek som passar in i skärmen. Sedan lade jag till en skärm för kontroler och story så man vet varför man gör saker och vad man gör och hur man gör det. Nästa gång ska jag börja komentera allt och lägga det så det är redo för inlämning men koden av prodjektet är nu klart.
