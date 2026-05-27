@@ -1,3 +1,4 @@
+## inporting needed packeges
 import threading
 import pygame
 import websockets
@@ -8,18 +9,25 @@ import time
 from dataclasses import dataclass
 from typing import Generic, TypeVar
 
+## Deffining generic
 T = TypeVar("T")
 
-## Setting game state to 0, which means that the game is in the start menu state. 
+## Sets starting values for some global variables that are used to keep track of the game state and server connection.
+## gameestate 1 means we are trying to conect to server
 gamestate = 0
+## We set rotaition to 0 so strait in one direction. The rotation is local and is therfor set in the client
 Rotation = 0
+## This is the IP adress to we are domomed servers. Curently this server is hosted on render.com. If we want to host our own server we can change this to the IP adress of our server to your we are doomed server.
 ServerIP = "we-are-domed.onrender.com/"
 
+## Created a class for the server packeges.
 @dataclass(slots=True, frozen=True)
 class ServerPacekt(Generic[T]):
+    # A server packege is consisting of two components a type that is a string and tells us what we shold do with the packet and a data type that we cant predict that has information vital to execute the comand specefied in packet type
     type: str
     data: T
 
+## This function makes evry text lage enuf so it fits on every screan, it takes in the text we want to render, the width of the area we want to render it in, the font name and the max font size we want to use, it then returns a font object that we can use to render the text with the correct size.
 def Rezistext(text, textWidth, font_name="Arial", max_font_size=30):
     Taxtval = pygame.font.SysFont("Arial", max_font_size)
     for i in range(max_font_size):
@@ -28,7 +36,7 @@ def Rezistext(text, textWidth, font_name="Arial", max_font_size=30):
             break
     return Taxtval
     
-
+## Creates the class responsebale for comenecation betwean client and server in a good way
 class ServerComnicationHandler():
     print("Server Communication Handler Initialized")
     ## This is ran when the class is created and runs ConnectToServer in the background so we can render conection screan under the
