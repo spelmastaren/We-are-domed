@@ -423,7 +423,7 @@ while isRunning:
     if gamestate == 6:
         serverhandler.Screnachanching = time.time() + 1
         screen.fill((0, 255, 0))
-        Conntrolstext = ["W - Move forward", "S - Move backward", "A - Turn left", "D - Turn right","---------------------","Navigate in menus with the mouse"]
+        Conntrolstext = ["W - Move forward", "S - Move backward", "A - Turn left", "D - Turn right","---------------------","Navigate in menus with the mouse", "To close game pres the x in the corner"]
         for i,v in enumerate(Conntrolstext):
             text = Rezistext(v, screen.get_width() - 20, "Arial", 30)
             screen.blit(text.render(v, True, (0, 0, 0)), (10, (i*30+20)))
