@@ -1,15 +1,26 @@
+// prints Server initialized so i know code started corectly
 console.log("Server initialized");
+
+// gets websocket packege and creates a websocket server on port 8080
 const ws = require("ws");
 const wss = new ws.Server({ port: 8080 });
+
+// Sets every players spead to 0.05 units per server tick.
 const PlayerSpeed = 0.05;
 
+// A number that keeps count and is assigned to player so no player gets same username as someone else.
 let playerjoinnumber = 1;
+
+// Serverr ID adding is used so 2 servers never get the same lobby ID, this is important because lobby ID is used to identify lobbys and if 2 lobbys have the same ID it can cause problems when players try to join lobbys or when the server tries to update the game state of a lobby, this way we can ensure that every lobby has a unique ID and we can easily identify and manage lobbys on the server.
 let serverIDadding = 1;
 
+// creates maps so we can identefy players and lobbys by lobby id and websocket connection.
 let lobbys = new Map();
 let players = new Map();
 
+// Creates lobby class so multebale of the object can be created and used.
 class lobby {
+    // When this is constructed we create all varibales we are going to use in lobby but we set them to the ovies awnser or nothing.
     constructor(name) {
         this.map = null;
         this.ID = name;
@@ -21,25 +32,32 @@ class lobby {
         console.log("Lobby created with ID:", name);
     };
 
+    // This function is called to prepare the lobby for a new game, it resets all players in the lobby to their starting position and state, it also generates a new map for the lobby and spawns enemies in the lobby, this way we can ensure that every game in the lobby is different and that players have a new experience every time they play, it also makes sure that all players are reset and ready for the new game so we can have a smooth transition between games and avoid any issues with players being in the wrong state or position when a new game starts.
     PerpareLobby() {
+        // resers every player in the lobby to starting position and state
         for (const player of this.players) {
             player.position = { x: 10.5, y: 10.5 };
             player.currentInput = { x: 0, y: 0};
             player.InGame = false;
         };
+        // prints out that players are done
         console.log("Lobby with ID:", this.ID, " have all players reset and redy");
-        this.enemies = [];
-        // Genererar och avgör om det är möjligt att klara den
+        // Uses A* to get the way frome start to goal. This is to see if map is playebale and fun.
         let [map, goal] = randomizemap();
         while (FindshortestPath(map, { x: 10, y: 10 }, { x: goal.x, y: goal.y }) == null) {
             [map, goal] = randomizemap();
         };
+        // make starting tile always be a air tile so player dose not spawn in a wall.
         map[10][10] = 0;
+        // Print Lobby Map Prepared with ID: lobby ID and goal at:, goal position
         console.log("Lobby Map Prepared with ID:", this.ID, "and goal at:", goal);
+        // set it as the lobby map
         this.map = map;
-
+        // start enemy list as emty and add enemys to lobby.
+        this.enemies = [];
         // Spawn Enemies
         let Enemy = null;
+        // Get 10 ennemys to spawn in air tiles and not on the player spawn tile.
         for (let i = 0; i < 10; i++) {
             while (true) {
                 const spawn = { x: Math.floor(Math.random() * 100), y: Math.floor(Math.random() * 100) };
@@ -48,30 +66,40 @@ class lobby {
                     break;
                 }
             }
+            // add the enemy to the lobby enemys list
             this.enemies.push(Enemy);
         }
+        // Lobby is now prepaired and we have spawned ennemys, print that out with lobby ID.
         console.log("Lobby with ID:", this.ID, " have enemies spawned redy and hungry for players to hunt");
     }
 
+    // Stats the game
     startGame() {
+        // Sends out a start packet to all players in lobby with the map data so they can start the game, it also sets all players in the lobby to in game and resets their movement input so they start with no movement, this way we can ensure that all players are in the correct state and have the correct information to start the game, it also makes sure that all players are ready and that the game starts smoothly without any issues with players being in the wrong state or having the wrong information when the game starts.
+        // lopps trow all players in lobby
         for (const player of this.players) {
             player.InGame = true;
             player.HasMovedInCurrentGame = false;
+            // if connection is open send start game packet with map data else close connection
             if (player.conection.readyState === ws.OPEN) {
                 player.conection.send(JSON.stringify({ type: "GameStarted", data: { map: this.map } }));
             } else {
+                // if connection is not open log that player connection is missed and close connection 
                 player.conection.close();
             }
         }
+        // Sets game loops every AI gets its own loop.
         this.Interval = setInterval(() => this.GameUpdate(), 50);
+        // loop trow all enemys in lobby and set interval for them to update every 50 ms
         for (const Enemy of this.enemies) {
-            Enemy.Interval = setInterval(() => Enemy.GameUpdate(), 50);
+            Enemy.Interval = setInterval(() => Enemy.GameUpdate(), 500);
         }
     }
 
     GameUpdate() {
         // makes a list with all player names and positions
         let playerInfos = [];
+        // loop trow all players in lobby and update their position based on their movement input and check if they have reached the goal or if they have been caught by an enemy, if they have reached the goal send them a winner packet and if they have been caught send them a caught packet, this way we can ensure that players are updated correctly and that the game state is accurate, it also makes sure that players are notified of important events like winning or being caught so they can react accordingly and have a better gaming experience.
         for (const player of this.players) {
             if (player.InGame === true) {
                     if (this.map[Math.floor(player.position.y)][Math.floor(player.position.x)] === 2) {

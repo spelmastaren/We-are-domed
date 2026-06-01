@@ -49,24 +49,33 @@ class ServerComnicationHandler():
 
     ## This function is responsible for connecting to the server and receiving the username from the server, it will also start a new thread to handle incoming messages from the server.
     def ConnectToServer(self):
+        ## This is a loop that will try to connect to the server 200 times before giving up, if it connects it will receive the username from the server and set the local player location and current movement to default values, it will also set the connected variable to true and start a new thread to handle incoming messages from the server. If it fails to connect after 200 attempts it will set the gamestate to -1 which is the connection failed state.
         ConnectionAttemt = 0
         while ConnectionAttemt < 200 and self.LeaveServer == False:
             try:
+                ## We connect to the server using websockets, we use wss:// because we are using a secure connection, if we were using a non secure connection we would use ws://.
                 self.connection = connect('wss://' + ServerIP)
+                ## as sonn as we connect to the server we are going to receive a message from the server that contains our username, we need this username to identify us in the game and to know which player is us when we receive updates from the server about player locations and other information.
                 self.username = json.loads(self.connection.recv())["data"]["username"]
+                ## Prints the username we received from the server, this is useful for debugging and to know that we have successfully connected to the server and received our username.
                 print("Username received from server:", self.username)
-                self.LocalPlayerLocation = {"x": 5, "y": 5}
+                ## Setup veriebales with a prediction of server.
+                self.LocalPlayerLocation = {"x": 0.0, "y": 0.0}
                 self.CurentMovment = {"x": 0, "y": 0}
+                ## Tells game that connection sucsided
                 self.Connected = True
+                ## Predictiing lobbys before packet arive.
                 self.lobbys = []
                 break
             except Exception as e:
                 ConnectionAttemt += 1
+        ## IF we did not connect after 200 attempts we set gamestate to -1 which is the connection failed state, this will render a screan that tells the player that we failed to connect to the server and they should try again later, this could be due to the server being down or the player having no internet connection.
         if self.connection == None:
             global gamestate
             gamestate = -1
-        
-        threading.Thread(target=self.HandleServerConnection).start()
+        else:
+            ## If we connected to the server we start a new thread to handle incoming messages from the server, this is important because we want to be able to receive messages from the server while still being able to render the game and respond to player input, if we did not use a separate thread for handling server messages we would not be able to do anything else while waiting for messages from the server, this way we can handle server messages in the background while still being able to render the game and respond to player input.
+            threading.Thread(target=self.HandleServerConnection).start()
 
     ## If we have a lobby id this function will send that we want to join and if server agreas we join the new lobby
     def JoinLobbyWhitID(self,ID):
@@ -74,11 +83,10 @@ class ServerComnicationHandler():
     
     ## Sends message to server to create a lobby
     def CreateLobby(self):
-        print("Creating lobby...")
         self.connection.send(json.dumps({"type": "CreateLobby", "data": {}}))
 
+    ## This function is called when the player clicks the leave lobby button, it sends a message to the server to leave the lobby, the server will then send a message to all players in the lobby to update the lobby information and remove the player from the lobby.
     def LeaveLobby(self):
-        print("Leaving lobby...")
         self.connection.send(json.dumps({"type": "LeaveLobby", "data": {}}))
 
     ## This function is called when the player clicks the start game button, it sends a message to the server to start the game, the server will then send a message to all players in the lobby to start the game and load the map.
@@ -140,7 +148,7 @@ class ServerComnicationHandler():
                 Rotation = math.pi / 4
                 print("Starting game...")
                 ## This is a prediction on where we are in the map. If we are wrong we are going to snap to corect positin after a while but this makes it smother
-                self.LocalPlayerLocation = {"x": 10.0, "y": 10.0}
+                self.LocalPlayerLocation = {"x": 10.5, "y": 10.5}
             ## Updates player locatins and also local players position, Position is used to know wher we shold render
             if Paket.type == "UpdateLocations":
                 gamestate = 4
@@ -157,6 +165,7 @@ class ServerComnicationHandler():
                 self.Screnachanching = time.time() + 10
                 gamestate = 5
                 print("Player won the game!")
+            ## The server thinks you lost the game and this event prints and switshes to a game scen for defeat
             if Paket.type == "Caught":
                 self.Screnachanching = time.time() + 10
                 gamestate = -5
@@ -166,31 +175,38 @@ class ServerComnicationHandler():
 
 
 
-
+## starting pygame and creating the game window, this is where we will render the game and all the menus, we also set the caption of the window to "We are doomed" to make it clear that this is the game window.
 pygame.init()
 pygame.display.set_caption("We are doomed")
 screen = pygame.display.set_mode((500, 500), pygame.RESIZABLE)
 
 
-
+## This is the main game loop, this is where we will handle all the game logic and rendering, this loop will run until the player closes the game window, we also calculate the delta time to make sure that our game runs at the same speed on all computers regardless of how fast they are.
 serverhandler = None
 isRunning = True
 lastTime = time.time()
 ##ServerComnicationHandler.StartGame(serverhandler)
 while isRunning:
+    ## A dstep in when time.deltaTime dose not exists this calculates that.
     currentTime = time.time()
     dt = currentTime - lastTime
     lastTime = currentTime
+
+    ## This is where we handle all the events that pygame gives us, this includes things like closing the game window, clicking buttons and resizing the game window, we also check for mouse clicks and if the player clicks on certain areas of the screen we will perform certain actions like joining a lobby or starting the game.
     for event in pygame.event.get():
+        ## If we press the red X in the courner. When that happends We do a safe disconnect to not crash websocket. So the safe waits to the websocket can close closes it and then closes the game this takes 4 seconds but it is better than crashing the game and leaving the websocket open which can cause problems for the the system.
         if event.type == pygame.QUIT:
             isRunning = False
             if serverhandler != None:
                 serverhandler.Disconnect()
                 break
+        ## This is where we handle mouse clicks, we check if the player clicks on certain areas of the screen and if they do we perform certain actions like joining a lobby or starting the game, we also check the gamestate to know what we should do when the player clicks on certain areas of the screen, for example if we are in the main menu and the player clicks on the create lobby button we will send a message to the server to create a lobby, if we are in a lobby and the player clicks on the start game button we will send a message to the server to start the game, this way we can have different buttons and actions depending on what gamestate we are in.
         if event.type == pygame.MOUSEBUTTONDOWN:
             mouse_pos = pygame.mouse.get_pos()
+            ## IF we connected wrong crash as soon as cliecked
             if gamestate == -1:
                 break
+            ## This is where we handle mouse clicks in the main menu, we check if the player clicks on the create lobby button, the controls button or the story button and if they do we perform the corresponding action, we also check if the player clicks on any of the lobbys that are available to join and if they do we send a message to the server to join that lobby.
             if gamestate == 1:
                 if screen.get_width()//4 * 3 < mouse_pos[0] < screen.get_width() and (screen.get_height()//5)*4 < mouse_pos[1] < screen.get_height():
                     print("Create lobby button clicked")
@@ -209,6 +225,7 @@ while isRunning:
                         print(f"Lobby {lobby['lobbyID']} clicked")
                         serverhandler.JoinLobbyWhitID(lobby["lobbyID"])
                         break
+            ## This is where we handle mouse clicks in the lobby, we check if the player clicks on the start game button or the leave lobby button and if they do we perform the corresponding action, we also check if the player is allowed to start the game before allowing them to click the start game button, this way we can prevent players from starting the game before everyone is ready.
             if gamestate == 3:
                 if serverhandler.canStartGame and 0 < mouse_pos[0] < screen.get_width()//2 and screen.get_height() - 40 < mouse_pos[1] < screen.get_height():
                     print("Start game button clicked")
@@ -216,6 +233,7 @@ while isRunning:
                 if screen.get_width()//2 < mouse_pos[0] < screen.get_width() and screen.get_height() - 40 < mouse_pos[1] < screen.get_height():
                     print("Leave lobby button clicked")
                     serverhandler.LeaveLobby()
+            ## This is where we handle mouse clicks in the controls and story screen, we check if the player clicks on the back button and if they do we return to the main menu, this way the player can read the controls and story and then easily return to the main menu to start playing the game.
             if gamestate == 6 or gamestate == 7:
                 if 0 < mouse_pos[0] < screen.get_width() and screen.get_height() - 40 < mouse_pos[1] < screen.get_height():
                     print("Back button clicked")
@@ -247,6 +265,7 @@ while isRunning:
             pygame.draw.rect(screen, (255, 0, 0), (0, 80 + i*40, screen.get_width()//4 * 3, 40))
             screen.blit(pygame.font.SysFont("Arial", 30).render(str(lobby["lobbyID"]), True, (0, 0, 0)), (5, 80 + i*20))
 
+        ## Renders the buttons for create lobby, controls and story, these buttons are on the right side of the screen and are rendered in different colors to make them easy to distinguish, we also render the text for each button on top of the button to make it clear what each button does, this way the player can easily navigate the main menu and find the options they are looking for.
         pygame.draw.rect(screen, (255, 255, 0), (screen.get_width()//4 * 3, screen.get_height()//5, screen.get_width()//4, (screen.get_height()-70) // 5))
         pygame.draw.rect(screen, (0, 122, 255), (screen.get_width()//4 * 3, (screen.get_height()//5)*3, screen.get_width()//4, (screen.get_height()) // 5))
         pygame.draw.rect(screen, (255, 0, 255), (screen.get_width()//4 * 3, (screen.get_height()//5)*4, screen.get_width()//4, (screen.get_height()) // 5))
@@ -266,12 +285,14 @@ while isRunning:
     if gamestate == 3:
         screen.fill((0, 0, 255))
         screen.blit(pygame.font.SysFont("Arial", 30).render(f"Joined lobby: {serverhandler.lobbyID}", True, (0, 0, 0)), (5, 0))
+        ## Renders all players in the lobby and marks you in yellow and others in red.
         for i, player in enumerate(serverhandler.players):
             if player["Username"] == serverhandler.username:
                 pygame.draw.rect(screen, (255, 215, 0), (0, 80 + i*40, screen.get_width(), 40))
             else:
                 pygame.draw.rect(screen, (255, 0, 0), (0, 80 + i*40, screen.get_width(), 40))
             screen.blit(pygame.font.SysFont("Arial", 30).render(player["Username"], True, (0, 0, 0)), (5, 80 + i*40))
+        ## IF we can start the game we render the start game button in green and if we cant start the game we render it in a darker green and change the text to game is running, this way the player can easily see if they are allowed to start the game or not and if they are not allowed to start the game they can see that the game is already running and they just have to wait for it to end before they can start a new game.
         if serverhandler.canStartGame:    
             pygame.draw.rect(screen, (0, 255, 0), (0, screen.get_height() - 40, screen.get_width()//2, 40))
             screen.blit(pygame.font.SysFont("Arial", 30).render("Start Game", True, (0, 0, 0)), (5, screen.get_height() - 35))
@@ -279,6 +300,7 @@ while isRunning:
             pygame.draw.rect(screen, (0, 200, 0), (0, screen.get_height() - 40, screen.get_width()//2, 40))
             screen.blit(pygame.font.SysFont("Arial", 30).render("Game is running", True, (0, 0, 0)), (5, screen.get_height() - 35))
         
+        ## Renders leve lobby button.
         pygame.draw.rect(screen, (255, 0, 0), (screen.get_width()//2, screen.get_height() - 40, screen.get_width()//2, 40))
         screen.blit(pygame.font.SysFont("Arial", 30).render("Leave Lobby", True, (0, 0, 0)), (screen.get_width()//2 + 10, screen.get_height() - 35))
         pygame.display.flip()
@@ -288,14 +310,17 @@ while isRunning:
         ## Raycasting
         screen.fill((0, 0, 255))
         Map = serverhandler.map
+        ## Loops trow 60 digreas of ratycasts
         for i in range(60):
             x,y = serverhandler.LocalPlayerLocation["x"], serverhandler.LocalPlayerLocation["y"]
             rot_i = Rotation + math.radians(i-30)
+            ## calculates the sin and cos of the rotation of the ray, this is used to move the ray forward in the correct direction, we multiply by 0.01 to make the ray move in small increments, this way we can check for collisions with walls and players more accurately, if we moved the ray in larger increments we might skip over walls and players and not detect them correctly.
             sin = 0.01 * math.sin(rot_i)
             cos = 0.01 * math.cos(rot_i)
+            ## This is where we keep track of players and enemys in sight, we need to keep track of them in case we hit a wall and need to render them before the wall, if we did not keep track of them we would not be able to render them correctly and they would appear to be behind the wall even if they are in front of it, this way we can render them in the correct order and make sure that they appear in front of the wall if they are in front of it and behind the wall if they are behind it.
             player_in_sight = []
             Enemys_in_sight = []
-            ## Shoots ray 600 uniits forward
+            ## Shoots ray 500 uniits forward
             for n in range(500):
                 x += cos
                 y += sin
@@ -337,7 +362,7 @@ while isRunning:
                 pygame.draw.line(screen, (0, max(0,int(155-playerInfo["raytravle"])), max(0,int(213-playerInfo["raytravle"]))), (screen.get_width() // 60 * i, y_floor), (screen.get_width() // 60 * i, y_body_top), screenwidth // 60)
                 pygame.draw.line(screen, (max(0,int(255 - playerInfo["raytravle"])), 0, 0), (screen.get_width() // 60 * i, y_body_top+1), (screen.get_width() // 60 * i, y_head_top), screenwidth // 60)
                 break
-
+            ## renders enemys in sight, the distance is used to make the enemy smaller the further away they are, and also to make them darker the further away they are, enemys are rendered in red to make them easy to distinguish from players.
             for enemyInfo in Enemys_in_sight:
                 dist = enemyInfo["dist"]
                 Column_height = (screen.get_height() / (dist + 0.000001)) / 2
@@ -349,23 +374,28 @@ while isRunning:
                 pygame.draw.line(screen, (max(0,int(255 - enemyInfo["raytravle"])), max(0,int(255 - enemyInfo["raytravle"])), max(0,int(255 - enemyInfo["raytravle"]))), (screen.get_width() // 60 * i, y_body_top+1), (screen.get_width() // 60 * i, y_head_top), screenwidth // 60)    
 
         ## Movment logic
+
+        ## Presed is a list of pressed buttons in this frame
         pressed = pygame.key.get_pressed()
         movebuttons = 0
         forwardMovmentX = 0
         forwardMovmentY = 0
         if pressed[pygame.K_w]:
+            ## calculade forward movment in the direction we are facing, we use the rotation to calculate the direction we are facing and then multiply it by the movment speed to get the amount we should move in that direction, this way we can move in the direction we are facing and not just in the cardinal directions, this makes the movement more fluid and allows for more precise control.
             dirx = math.cos(Rotation) * 1
             diry = math.sin(Rotation) * 1
             forwardMovmentX = dirx * 1
             forwardMovmentY = diry * 1
             movebuttons += 1
         elif pressed[pygame.K_s]:
+            ## calculade backward movment in the direction we are facing, this is the same as forward movment but we multiply by -1 to move in the opposite direction, this way we can move backwards in the direction we are facing and not just in the cardinal directions, this makes the movement more fluid and allows for more precise control.
             dirx = math.cos(Rotation) * 1
             diry = math.sin(Rotation) * 1
             forwardMovmentX = dirx * -1
             forwardMovmentY = diry * -1
             movebuttons += 1
 
+        ## If nesesary send movment input to server, if we are pressing a move button we send the movment input to the server, if we are not pressing any move buttons we send 0,0 to the server to indicate that we are not moving, this way the server can update our position correctly and we can have smooth movement in the game, if we did not send 0,0 when we are not moving the server would not know that we stopped moving and our character would keep moving in the last direction we were moving in, this way we can have more precise control over our character and make sure that it stops when we want it to stop.
         if movebuttons != 0:
             serverhandler.updateMovmentInput(forwardMovmentX, forwardMovmentY)
         else:
@@ -389,6 +419,7 @@ while isRunning:
         screen.blit(pygame.font.SysFont("Arial", 30).render("You are dommed and dead", True, (0, 0, 0)), (screen.get_width() // 2 - 125, screen.get_height() // 2 - 15))
         pygame.display.flip()    
 
+    ## gamestate 6 is the controls screen, this screen shows the controls for the game and how to navigate the menus, this way the player can easily learn how to play the game and navigate the menus without having to guess or look up the controls online, we also render a back button that allows the player to return to the main menu when they are done reading the controls, this way they can easily return to the main menu and start playing the game when they are ready.
     if gamestate == 6:
         serverhandler.Screnachanching = time.time() + 1
         screen.fill((0, 255, 0))
@@ -400,6 +431,7 @@ while isRunning:
         screen.blit(pygame.font.SysFont("Arial", 30).render("Back", True, (0, 0, 0)), (5, screen.get_height() - 35))
         pygame.display.flip()
     
+    ## gamestate 7 is the story screen, this screen shows the story of the game and the objective of the game, this way the player can understand the context of the game and what they are trying to accomplish, we also render a back button that allows the player to return to the main menu when they are done reading the story, this way they can easily return to the main menu and start playing the game when they are ready. The story is rendered in multiple lines to make it easier to read and to fit on the screen, we also use a different color for the text to make it stand out from the background and make it easier to read.
     if gamestate == 7:
         serverhandler.Screnachanching = time.time() + 1
         screen.fill((0, 255, 0))
@@ -412,9 +444,9 @@ while isRunning:
         pygame.display.flip()
 
         
-
+    ## update frame
     pygame.display.flip()
 
 
-
+## when we get out of loop we turn of the game.
 pygame.quit()
