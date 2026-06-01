@@ -101,27 +101,38 @@ class lobby {
         let playerInfos = [];
         // loop trow all players in lobby and update their position based on their movement input and check if they have reached the goal or if they have been caught by an enemy, if they have reached the goal send them a winner packet and if they have been caught send them a caught packet, this way we can ensure that players are updated correctly and that the game state is accurate, it also makes sure that players are notified of important events like winning or being caught so they can react accordingly and have a better gaming experience.
         for (const player of this.players) {
+            // if player is not in current game skip them and do not update their position or check for win or lose conditions
             if (player.InGame === true) {
+                    // cheks if player is on the goal tile
                     if (this.map[Math.floor(player.position.y)][Math.floor(player.position.x)] === 2) {
+                        // in that case make the player shold get a win screan so we can tell that to the players client and remember player is no longer in game
                         player.InGame = false;
+                        // Prints out that player has won the game in lobby with ID: lobby ID and player username, this is for debugging and to have a log of who wins games and to make sure that the win condition is working correctly, it also makes it more fun to see who wins games and to have a record of it on the server.
                         console.log("Player", player.Username, "has reached the goal and won the game!");
+                        // Tells the players client that player won
                         player.conection.send(JSON.stringify({ type: "Winner", data: {} }));
+                        // Becuse we have less players we need to chek if we shold stop the current match.
                         this.sholdChekIfendGame = true;
                     }
+
+                    // Cheks if player position is on the same as an enemy position, if they are then player is caught and we need to send them a caught packet and make them no longer in game, this way we can ensure that the lose condition is working correctly and that players are notified when they are caught by an enemy so they can react accordingly and have a better gaming experience, it also makes the game more fun and challenging to have enemies that can catch players and make them lose the game.
                     for (const enemy of this.enemies) { 
                         if (Math.floor(enemy.position.x * 10) === Math.floor(player.position.x * 10) && Math.floor(enemy.position.y * 10) === Math.floor(player.position.y * 10)) {
                             player.InGame = false;
+                            // Log and send caught packet to player client.
                             console.log("Enemy has eaten player", player.Username, "in lobby with ID:", this.ID);
                             player.conection.send(JSON.stringify({ type: "Caught", data: {} }));
                             this.sholdChekIfendGame = true;
                             break;
                         }
                     }
-
+                    
+                    // Chek if player move is valid if it is then update player position to new position based on movement input, this way we can ensure that players can only move to valid positions and that they cannot move through walls or out of bounds, it also makes the game more fair and fun to have a consistent and accurate movement system that players can rely on and that works correctly.
                     if (this.map != null && this.map[Math.floor(player.position.y + player.currentInput.y * PlayerSpeed)] != null && this.map[Math.floor(player.position.y + player.currentInput.y * PlayerSpeed)][Math.floor(player.position.x + player.currentInput.x * PlayerSpeed)] !== 1) {
                         player.position.x += player.currentInput.x * PlayerSpeed;
                         player.position.y += player.currentInput.y * PlayerSpeed;
                     }
+                // push to list so we can send it.
                 playerInfos.push({
                     Username: player.Username,
                     Position: player.position
@@ -129,15 +140,22 @@ class lobby {
             }
         }
 
+        // if we shold chek to stop the game then we do it here
         if (this.sholdChekIfendGame) {
+            // we assume we shold not stop the game.
             this.sholdChekIfendGame = false;
+            // we check if all the players are in lobby so we assume there is no players left
             let NonePlayersLeft = true;
+            // loop trow all players in lobby and if we find one that is still in game then we set NonePlayersLeft to false and break the loop, this way we can efficiently check if there are any players left in the game without having to check every player if we already found one that is still in game, it also makes the code more efficient and faster to check for end game conditions.
             for (const player of this.players) {
+                // if the player is ingame then at least one player is in game and ther are players left so set NonePlayersLeft till false
                 if (player.InGame === true) {
                     NonePlayersLeft = false;
                     break;
                 }
             }
+
+            // if there are no players left we clear enemys intervals and makes the lobby stops the loop.
             if (NonePlayersLeft == true) {
                 console.log("Game ended in lobby with ID:", this.ID);
                 clearInterval(this.Interval);
@@ -149,6 +167,8 @@ class lobby {
                 this.open = true;
             }
         }
+        
+        // preparing enemys info for websockets pakets
         let enemyPositions = [];
         for (const enemy of this.enemies) {
             enemyPositions.push({
@@ -156,8 +176,10 @@ class lobby {
                 y: enemy.position.y
             });
         }    
+
         // Send updated player info to all players in the lobby
         for (const player of this.players) {
+            // if player is ingame and socket is open we send uppdate locations with necesary data
             if (player.InGame === true) {
                 if (player.conection.readyState === WebSocket.OPEN) {
                     player.conection.send(JSON.stringify({ type: "UpdateLocations", data: { players: playerInfos, enemyPositions: enemyPositions } }));
@@ -169,14 +191,21 @@ class lobby {
     }
 };
 
+// a function for creating a lobby.
 function createLobby() {
+    // Creates a new lobby with id of serverIDadding.
     const Lobby = new lobby(serverIDadding);
+    // sets lobby in lobbty map to key serverIDadding
     lobbys.set(serverIDadding, Lobby);
+    // adds 1 to serverIDadding so next lobby gets a different ID.
     serverIDadding++;
+    // returns created lobby
     return Lobby;
 }
 
+// A* allgorithem for pathfinding, it takes a grid, a start position and an end position and returns the shortest path from start to end as a list of coordinates, this way we can have enemies that can navigate the map and find the player even if there are walls in the way, it also makes the game more fun and challenging to have enemies that can find their way to the player and make it harder for players to win the game.
 function FindshortestPath(grid, start, end) {
+    // Gets length of the rows and colums
     const rows = grid.length;
     const cols = grid[0].length;
 
@@ -242,13 +271,17 @@ function FindshortestPath(grid, start, end) {
         }
     }
 
-    return null; // No path found
+    return null; // No path found and we should teturn null
 }
 
+
+// function to handle incoming messages from players clients.
 function handelemessage(message,socket) {
+    // we make the message readebale to are script
     const messageJSON = JSON.parse(message);
+    // Get the player object for the player who sent the message.
     const player = players.get(socket);
-    //console.log("Parsed message:", messageJSON);
+    
     // If client askes to create a lobby a new lobby is created and the player is added to it
     if (messageJSON.type === "CreateLobby") {
         if (player.lobby != null) {
