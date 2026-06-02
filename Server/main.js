@@ -681,7 +681,7 @@ wss.on("connection", (socket) => {
                 lobbys.delete(lobby.ID)
             }
         }
-        // delete player
+        // delete player object from socket reference
         players.delete(socket);
     });
 });
