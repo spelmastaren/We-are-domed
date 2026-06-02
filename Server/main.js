@@ -92,7 +92,7 @@ class lobby {
         this.Interval = setInterval(() => this.GameUpdate(), 50);
         // loop trow all enemys in lobby and set interval for them to update every 50 ms
         for (const Enemy of this.enemies) {
-            Enemy.Interval = setInterval(() => Enemy.GameUpdate(), 500);
+            Enemy.Interval = setInterval(() => Enemy.GameUpdate(), 100);
         }
     }
 
@@ -411,41 +411,60 @@ function handelemessage(message,socket) {
             console.log("Lobby is empty, Deleating lobby with ID " + lobby.ID)
             // If a game is running 
             if (lobby.Interval != null) {
+                // clear all ennemys intervals
+                for (const Enemy of lobby.enemies) {
+                    clearInterval(Enemy.Interval);
+                    Enemy.Interval = null;
+                }
+                // clears the lobbys update loop
                 clearInterval(lobby.Interval)
                 lobby.Interval = null
             }
+            // deleate every refrence to lobby so it gets forgoten
             lobbys.delete(lobby.ID)
         }
     }
 };
 
+// function for creating the map
 function randomizemap() {
+    // first we start with a emty map
     const map = [];
-    
+    // set a standard goal pso so we can randomize it later
     let goalpos = { x: 0, y: 0 };
+    // make the higest randomized goal score 0 the tile with goal score closest to 1 will be the goal.
+    let higestgoalscore = 0;
+    // make map 100 * 100 tiles
     for (let i = 0; i < 100; i++) {
         const row = [];
-        higestgoalscore = 0;
         for (let j = 0; j < 100; j++) {
             if (i === 0 || i === 99 || j === 0 || j === 99) {
                 row.push(1); // Border walls
+                // get a goal score and see if it is the higest if it is chance the goal pos to that tile
                 const goalscore = Math.random()
                 if (i !== j && goalscore > higestgoalscore) {
                     higestgoalscore = goalscore
                     goalpos = { x: j, y: i }
                 }
             } else {
+                // if we are not at the corner walls we just randomize the walls
                 row.push(Math.random() < 0.4 ? 1 : 0); // 40% chance of being a wall
             }
         };
+        // add that row to the map
         map.push(row);
     };
-    map[goalpos.y][goalpos.x] = 2; // Place the goal    
+    // place goal on the map
+    map[goalpos.y][goalpos.x] = 2;
+    // return the map and goal pos
     return [map, goalpos];
 };
 
+// create the player class so we can have player objects
 class player {
+    // defin constroction that needs name of player and socket to bind the player to the object
     constructor(name, socket) {
+        // sets all defult valuuse to what thay are
         this.Username = name;
         this.position = { x: 10, y: 10 };
         this.lobby = null;
@@ -456,22 +475,35 @@ class player {
     };
 };
 
+// creates the ennemy
 class enemy {
+    // constructor for the ennemy it needs lobby and position
     constructor(lobby,position) {
+        // define position
         this.position = position;
+        // define target but not what it is
         this.target = null;
+        // the speed of an entity shold be 10% more than a player so thay can chase the player
         this.speed = PlayerSpeed * 1.1;
+        // path is now a emty list but A* will calculate that soon for entity
         this.path = [];
         this.pathIndex = 0;
         this.Lobby = lobby;
+        // This is used to determin if we need to make a new path
         this.lastBlockToGoTo = { x: 10, y: 10 };
+        // if entety cant go somwere it remebers that and never tryes that agen
         this.cantGoTo = [];
+        // interval is the entetys game loop
         this.Interval = null;
     };
+    // this goas in a strait line to the target position defined
     DumbGoTo(position) {
+        // calculates delta x and delta y to see where we need to mover
         const dx = position.x - this.position.x;
         const dy = position.y - this.position.y;
+        // if we do not need to move we do not move
         if (dx === 0 && dy === 0) return;
+        // if we need to move we move in corect direction
         if (dx > 0) {
             this.position.x += this.speed;
         }
@@ -486,28 +518,44 @@ class enemy {
         }
     }
 
+    // this is the game loop for the entetys AI system
     GameUpdate() {
+        // if we do not have a target or are target is no longer ingame the player died or won we find a new target
         if (this.target == null || this.target.InGame === false) {
+            // so we do not know the closet player so it is null
             let closestPlayer = null;
+            // we do not know closest distens and cuse nowan exists infinet away so it is infinety
             let closestDistance = Infinity;
+            // loop all players in lobby
             for (const player of this.Lobby.players) {
+                // if thay are not ingame thay do not need to be cheked
                 if (player.InGame === true) {
+                    // we chek the dinstens frome player to the entety with the Pythagorean theorem
                     const distance = Math.sqrt((player.position.x - this.position.x) ** 2 + (player.position.y - this.position.y) ** 2);
+                    // if the distens was closer then the last closest this is the new closest
                     if (distance < closestDistance) {
                         closestDistance = distance;
                         closestPlayer = player;
                     }
                 }
             }
+            // taget is the closest player ingame
             this.target = closestPlayer;
         }
+        // if we have a target
         if (this.target != null) {
+            // we define withc tile entety are positiond as and call it my block
             const myblock = { x: Math.floor(this.position.x), y: Math.floor(this.position.y) };
+            // we take the target tile 
             const targetBlock = { x: Math.floor(this.target.position.x), y: Math.floor(this.target.position.y) };
+            // If we are on the same tile as the target that means that no wall is in betwean us
             if (myblock.x === targetBlock.x && myblock.y === targetBlock.y) {
+                // so justgo in a strait line to the taget
                 this.DumbGoTo({ x: this.target.position.x, y: this.target.position.y });
             } else {
+                // if that is not the case we must be a smart entety
                 const curentTargetBlock = { x: Math.floor(this.target.position.x), y: Math.floor(this.target.position.y) };
+                // if we allredy made a path and player stands on the same tile then just go
                 if (curentTargetBlock.x === this.lastBlockToGoTo.x && curentTargetBlock.y === this.lastBlockToGoTo.y) {
                     if (this.path == null || this.path.length === 0) {
                         if (this.cantGoTo.includes({ x: curentTargetBlock.x, y: curentTargetBlock.y })) {
