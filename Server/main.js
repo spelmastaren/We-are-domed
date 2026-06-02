@@ -484,7 +484,7 @@ class enemy {
         // define target but not what it is
         this.target = null;
         // the speed of an entity shold be 10% more than a player so thay can chase the player
-        this.speed = PlayerSpeed * 1.3;
+        this.speed = PlayerSpeed * 6.1;
         // path is now a emty list but A* will calculate that soon for entity
         this.path = [];
         this.pathIndex = 0;
@@ -557,6 +557,7 @@ class enemy {
                 const curentTargetBlock = { x: Math.floor(this.target.position.x), y: Math.floor(this.target.position.y) };
                 // if we allredy made a path and player stands on the same tile then just go
                 if (curentTargetBlock.x === this.lastBlockToGoTo.x && curentTargetBlock.y === this.lastBlockToGoTo.y) {
+                    // 
                     if (this.path == null || this.path.length === 0) {
                         if (this.cantGoTo.includes({ x: curentTargetBlock.x, y: curentTargetBlock.y })) {
                             this.path = FindshortestPath(this.Lobby.map, myblock, curentTargetBlock);
