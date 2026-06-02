@@ -642,50 +642,47 @@ wss.on("connection", (socket) => {
     // make a player object for them with name player and a number and connect player object to socket
     playerObj = new player("Player " + playerjoinnumber,socket)
 
-    // Make client able to lisen with waiting
-    setTimeout(() => {
-        // send that it was a success
-        socket.send(JSON.stringify({ type: "Connection", data: { username: playerObj.username } }));
-        // bind it to the player map
-        players.set(socket, playerObj);
-        // add so next player gets one number higer
-        playerjoinnumber++;
-        // log the username
-        console.log("Assigned username:", players.get(socket).Username);
+    // send that it was a success
+    socket.send(JSON.stringify({ type: "Connection", data: { username: playerObj.username } }));
+    // bind it to the player map
+    players.set(socket, playerObj);
+    // add so next player gets one number higer
+    playerjoinnumber++;
+    // log the username
+    console.log("Assigned username:", players.get(socket).Username);
 
-        // if this conection recives any message that shold be sent to the function handelemessage that handels messages
-        socket.on("message", (message) => handelemessage(message,socket));
+    // if this conection recives any message that shold be sent to the function handelemessage that handels messages
+    socket.on("message", (message) => handelemessage(message,socket));
 
-        // connection closes this means that player is leving
-        socket.on("close", () => {
-            // we shold
-            // get the player 
-            const player = players.get(socket)
-            // log the disconect
-            console.log("Client disconnected:", player.Username);
-            // chek if thay whare in alobby and delete the frome that
-            if (player.lobby != null) {
-                const lobby = player.lobby
-                lobby.players = lobby.players.filter((cplayer) => cplayer !== player);
-                // if the lobby is now emety 
-                if (lobby.players.length === 0) {
-                    // log deletion of that
-                    console.log("Lobby is empty, Deleating lobby with ID " + lobby.ID)
-                    // if it had a game started stop that
-                    if (lobby.Interval != null) {
-                        clearInterval(lobby.Interval);
-                        for (const Enemy of lobby.enemies) {
-                            clearInterval(Enemy.Interval);
-                            Enemy.Interval = null;
-                        }
-                        lobby.Interval = null;
+    // connection closes this means that player is leving
+    socket.on("close", () => {
+        // we shold
+        // get the player 
+        const player = players.get(socket)
+        // log the disconect
+        console.log("Client disconnected:", player.Username);
+        // chek if thay whare in alobby and delete the frome that
+        if (player.lobby != null) {
+            const lobby = player.lobby
+            lobby.players = lobby.players.filter((cplayer) => cplayer !== player);
+            // if the lobby is now emety 
+            if (lobby.players.length === 0) {
+                // log deletion of that
+                console.log("Lobby is empty, Deleating lobby with ID " + lobby.ID)
+                // if it had a game started stop that
+                if (lobby.Interval != null) {
+                    clearInterval(lobby.Interval);
+                    for (const Enemy of lobby.enemies) {
+                        clearInterval(Enemy.Interval);
+                        Enemy.Interval = null;
                     }
-                    // delete lobby
-                    lobbys.delete(lobby.ID)
+                    lobby.Interval = null;
                 }
+                // delete lobby
+                lobbys.delete(lobby.ID)
             }
-            // delete player object from socket reference
-            players.delete(socket);
-        });
-    }, 500);
+        }
+        // delete player object from socket reference
+        players.delete(socket);
+    });
 });

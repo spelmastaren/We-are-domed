@@ -59,7 +59,7 @@ class ServerComnicationHandler():
                 message = json.loads(self.connection.recv())
                 
                 ## as sonn as we connect to the server we are going to receive a message from the server that contains our username, we need this username to identify us in the game and to know which player is us when we receive updates from the server about player locations and other information.
-                self.username = json.loads(self.connection.recv())["data"]["username"]
+                self.username = json.loads(message)["data"]["username"]
                 ## Prints the username we received from the server, this is useful for debugging and to know that we have successfully connected to the server and received our username.
                 print("Username received from server:", self.username)
                 ## Setup veriebales with a prediction of server.
