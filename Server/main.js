@@ -645,16 +645,18 @@ wss.on("connection", (socket) => {
     setTimeout(() => {
         // send that it was a success
         playerObj.conection.send(JSON.stringify({ type: "Connection", data: { username: playerObj.Username } }));
+        
         // bind it to the player map
         players.set(socket, playerObj);
+
+        // log the username
+        console.log("Assigned username:", players.get(socket).Username);
+
+        // if this conection recives any message that shold be sent to the function handelemessage that handels messages
+        socket.on("message", (message) => handelemessage(message,socket));
     }, 100);
     // add so next player gets one number higer
     playerjoinnumber++;
-    // log the username
-    console.log("Assigned username:", players.get(socket).Username);
-
-    // if this conection recives any message that shold be sent to the function handelemessage that handels messages
-    socket.on("message", (message) => handelemessage(message,socket));
 
     // connection closes this means that player is leving
     socket.on("close", () => {
