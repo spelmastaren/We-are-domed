@@ -247,7 +247,7 @@ while isRunning:
         if serverhandler == None:
             serverhandler = ServerComnicationHandler()
         if serverhandler.Connected:
-            gamestate = 1.5
+            gamestate = 1
 
     ## Connection Faild for some reason, could be server down or no internet connection.
     if gamestate == -1:
