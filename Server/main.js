@@ -642,9 +642,9 @@ wss.on("connection", (socket) => {
     // make a player object for them with name player and a number and connect player object to socket
     const playerObj = new player("Player " + playerjoinnumber,socket)
     // send that it was a success
-    playerObj.conection.send(JSON.stringify({ type: "Connection", data: { username: playerObj.username } }));
-    // bind it to the player map
     players.set(socket, playerObj);
+    // bind it to the player map
+    playerObj.conection.send(JSON.stringify({ type: "Connection", data: { username: playerObj.username } }));
     // add so next player gets one number higer
     playerjoinnumber++;
     // log the username
