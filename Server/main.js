@@ -669,6 +669,7 @@ wss.on("connection", (socket) => {
         if (player.lobby != null) {
             const lobby = player.lobby
             lobby.players = lobby.players.filter((cplayer) => cplayer !== player);
+
             // if the lobby is now emety 
             if (lobby.players.length === 0) {
                 // log deletion of that
@@ -684,6 +685,9 @@ wss.on("connection", (socket) => {
                 }
                 // delete lobby
                 lobbys.delete(lobby.ID)
+            } else {
+                // tell lobby to chek if it shold terminate the game
+                lobby.sholdChekIfendGame = true;
             }
         }
         // delete player object from socket reference
