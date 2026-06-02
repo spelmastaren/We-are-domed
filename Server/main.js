@@ -92,7 +92,7 @@ class lobby {
         this.Interval = setInterval(() => this.GameUpdate(), 50);
         // loop trow all enemys in lobby and set interval for them to update every 50 ms
         for (const Enemy of this.enemies) {
-            Enemy.Interval = setInterval(() => Enemy.GameUpdate(), 100);
+            Enemy.Interval = setInterval(() => Enemy.GameUpdate(), 300);
         }
     }
 
