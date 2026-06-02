@@ -640,7 +640,7 @@ wss.on("connection", (socket) => {
     // log it
     console.log("Client connected");
     // make a player object for them with name player and a number and connect player object to socket
-    playerObj = new player("Player " + playerjoinnumber,socket)
+    const playerObj = new player("Player " + playerjoinnumber,socket)
 
     // send that it was a success
     socket.send(JSON.stringify({ type: "Connection", data: { username: playerObj.username } }));
