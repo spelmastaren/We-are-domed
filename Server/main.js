@@ -645,8 +645,8 @@ wss.on("connection", (socket) => {
     players.set(socket, playerObj);
     // bind it to the player map
     setTimeout(() => {
-        playerObj.conection.send(JSON.stringify({ type: "Connection", data: { username: playerObj.username } }));
-    },100)
+        playerObj.conection.send(JSON.stringify({ type: "Connection", data: { username: playerObj.Username } }));
+    }, 100);
     // add so next player gets one number higer
     playerjoinnumber++;
     // log the username
