@@ -559,9 +559,6 @@ class enemy {
                 if (curentTargetBlock.x === this.lastBlockToGoTo.x && curentTargetBlock.y === this.lastBlockToGoTo.y) {
                     // if path is null or so short that it dose not exist make it
                     if (this.path == null || this.path.length === 0) {
-                        if (this.path == null && !this.cantGoTo.includes({ x: curentTargetBlock.x, y: curentTargetBlock.y })) {
-                            this.cantGoTo.push({ x: curentTargetBlock.x, y: curentTargetBlock.y });
-                        }
                         this.pathIndex = 0;
                         this.lastBlockToGoTo.x = curentTargetBlock.x;
                         this.lastBlockToGoTo.y = curentTargetBlock.y;
