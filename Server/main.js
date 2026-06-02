@@ -284,75 +284,132 @@ function handelemessage(message,socket) {
     
     // If client askes to create a lobby a new lobby is created and the player is added to it
     if (messageJSON.type === "CreateLobby") {
+        // if client is allredy in a lobby we do not want to create a nother one so we just send error back and return
         if (player.lobby != null) {
+            // Sends error back to players client.
             socket.send(JSON.stringify({ type: "error", data: { message: "Player is already in a lobby" } }));
+            // return / stops the function here
             return;
         };
         // creates a new lobby and adds the player to it
         let lobby = createLobby();
+        // Adds the player to the lobbys player list
         lobby.players.push(player);
+        // bindes players lobby varibale to the lobby
         player.lobby = lobby;
+        // Prints that it succesfully created a lobby
         console.log("Lobby created with ID:", lobby.ID);
+        // Sends a message back to client that it created and what lobby id it has.
         player.conection.send(JSON.stringify({ type: "LobbyCreated", data: { lobbyID: lobby.ID, success: true } }));
     }; 
+    // THis messagetype is for joining lobby and needs a lobby ID.
     if (messageJSON.type === "JoinLobby") {
+        // If player is allredy in a lobby this is probobly mistake hack or bug. 
         if (player.lobby != null) {
+            // Sends error back to players client.
             socket.send(JSON.stringify({ type: "error", data: { message: "Player is already in a lobby" } }));
+            // stops the function here
             return;
         }
+        // We try to gett the lobby with the lobby ID the client sent
         const lobby = lobbys.get(messageJSON.data["lobby_id"]);
+        // if we cant
         if (lobby == null) {
+            // Send error back to client that lobby was not found and return
             socket.send(JSON.stringify({ type: "error", data: {message: "Lobby not found"}}));
+            // stop the function here
             return;
         }
+        // If we found the lobby but it is curently running a game we do not want new players and that means it is closed
+        // If lobby is closed then
         if (!lobby.open) {
+            // send error back to the players client that lobby is closed and return
             socket.send(JSON.stringify({ type: "error", data: {message: "Lobby is closed"} }));
+            // stop the function here
             return;
         }
+        // if we found no problem with player or the lobby we can add them to the lobby.
+        // adds the player to the lobbys player list
         lobby.players.push(player);
+        // bindes players lobby varibale to the lobby
         player.lobby = lobby;
+        // Prints that player has joined the lobby with lobby ID and player username, this is for debugging and to have a log of who joins lobbys and to make sure that the join lobby function is working correctly, it also makes it more fun to see who joins lobbys and to have a record of it on the server.
         console.log("Player", player.Username, "joined lobby with ID:", lobby.ID);
+        // Sends a message back to client that it joined and what lobby id it has.
         player.conection.send(JSON.stringify({ type: "LobbyJoined", data: { lobbyID: lobby.ID, success: true } }));
     }
+    // if a client sends this it meens to start the game in the lobby thay are in
     if (messageJSON.type === "StartGame") {
+        // realese the lobby from the player object from the pointer in the player object
         const lobby = player.lobby;
+        // if lobby dose not exist it means that the player is not in a lobby this is becuse thay are hacking or a bug has happend. 
         if (lobby == null) {
+            // send a error back to the players client that they are not in a lobby
             socket.send(JSON.stringify({ type: "error", data: { message: "Player is not in a lobby" } }));
+            // stop the function here
             return;
         } else {
+            // if we are in a lobby (The most likly scenario) we want to close the lobby
             lobby.open = false;
+            // prepare the lobby for the game and start the game this includes creating the map and spawning the entitis.
             lobby.PerpareLobby();
+            // Start the game send all nececary information and start update loops.
             lobby.startGame();
         }
     };
+    // This message type is used when the input frome the user is somthing else then it was before.
     if (messageJSON.type === "UpdateMovementInput") {
+        // if this is true someone is messing with my game becuse this is allways betwin -1 and 1.
         if (Math.abs(messageJSON.data["x"]) >= 1 || Math.abs(messageJSON.data["y"]) >= 1) {
-            socket.send(JSON.stringify({ type: "error", data: { message: "HAcking detected: Movement input out of bounds" } }));
+            // becuse we do not want cheters in the game we send to the player that we detected the hacking.
+            socket.send(JSON.stringify({ type: "error", data: { message: "Hacking detected: Movement input out of bounds" } }));
+            // log the hacking in the console
             console.log(player.Username, "sent movement input out of bounds, possible hacking attempt detected, disconnecting player");
+            // close the connection
             socket.close();
+            // stops the code
             return;
+        // if this is true someone sent unnecesssary movment information thas can indecate of hacking and never happends normaly
         } else if ((messageJSON.data["x"] === player.currentInput.x || messageJSON.data["y"] === player.currentInput.y) && player.HasMovedInCurrentGame) {
+            // semd error to client that we detected this.
             socket.send(JSON.stringify({ type: "error", data: { message: "Hacking Detected: Movement input unchanged are you hacking?" } }));
+            // log detected hacking.
             console.log(player.Username, "sent unchanged movement input, possible hacking attempt detected, disconnecting player");
+            // close connection.
             socket.close();
+            // stops the function.
             return
         }
+        // Set player so thay have a movement input during the game 
         player.HasMovedInCurrentGame = true;
+        // update current input for the player.
         player.currentInput.x = messageJSON.data["x"];
         player.currentInput.y = messageJSON.data["y"];
     }
+    // This message type is for when a player wants to leave a lobby
     if (messageJSON.type === "LeaveLobby") {
+        // get the lobby thay are in
         const lobby = player.lobby;
+        // If the player is not in a lobby 
         if (lobby == null) {
+            // send error of that we are not in a lobby 
             socket.send(JSON.stringify({ type: "error", data: { message: "Player is not in a lobby" } }));
+            // stop function here
             return;
         }
+        // deleats player from the lobby player list
         lobby.players = lobby.players.filter((cplayer) => cplayer !== player);
+        // Unbind lobby varebale from player
         player.lobby = null;
+        // sets players ingame state to false
         player.InGame = false;
+        // logs that the player left
         console.log("Player", player.Username, "left lobby with ID:", lobby.ID);
+        // if lobby has zero players
         if (lobby.players.length === 0) {
+            // log that deliting lobby
             console.log("Lobby is empty, Deleating lobby with ID " + lobby.ID)
+            // If a game is running 
             if (lobby.Interval != null) {
                 clearInterval(lobby.Interval)
                 lobby.Interval = null
