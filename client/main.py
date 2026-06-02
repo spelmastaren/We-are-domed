@@ -55,6 +55,9 @@ class ServerComnicationHandler():
             try:
                 ## We connect to the server using websockets, we use wss:// because we are using a secure connection, if we were using a non secure connection we would use ws://.
                 self.connection = connect('wss://' + ServerIP)
+                ## takes message frome server
+                message = json.loads(self.connection.recv())
+                
                 ## as sonn as we connect to the server we are going to receive a message from the server that contains our username, we need this username to identify us in the game and to know which player is us when we receive updates from the server about player locations and other information.
                 self.username = json.loads(self.connection.recv())["data"]["username"]
                 ## Prints the username we received from the server, this is useful for debugging and to know that we have successfully connected to the server and received our username.
@@ -117,6 +120,7 @@ class ServerComnicationHandler():
         while self.connection != None and isRunning:
             ## resives a message from the server
             message = self.connection.recv()
+            print(message)
             ## Mekes server messages readebale to client
             messageJSON = json.loads(message)
             Paket = ServerPacekt(type=messageJSON["type"], data=messageJSON["data"])
