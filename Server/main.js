@@ -484,7 +484,7 @@ class enemy {
         // define target but not what it is
         this.target = null;
         // the speed of an entity shold be 10% more than a player so thay can chase the player
-        this.speed = PlayerSpeed * 1.1;
+        this.speed = PlayerSpeed * 1.3;
         // path is now a emty list but A* will calculate that soon for entity
         this.path = [];
         this.pathIndex = 0;
