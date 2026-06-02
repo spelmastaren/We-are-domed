@@ -559,19 +559,20 @@ class enemy {
                 if (curentTargetBlock.x === this.lastBlockToGoTo.x && curentTargetBlock.y === this.lastBlockToGoTo.y) {
                     // if path is null or so short that it dose not exist make it
                     if (this.path == null || this.path.length === 0) {
+                        // make path index 0 and make the lastBlockGoTo to current also make no target and return
                         this.pathIndex = 0;
                         this.lastBlockToGoTo.x = curentTargetBlock.x;
                         this.lastBlockToGoTo.y = curentTargetBlock.y;
-                    }
-                    if (this.path == null || this.path.length === 0) {
                         this.target = null;
                         return
-                    };
+                    }
+                    // if we had a path we shold follow ituntill the end.
                     this.DumbGoTo({ x: this.path[this.pathIndex].x + 0.5, y: this.path[this.pathIndex].y + 0.5 });
                     if (myblock.x === this.path[this.pathIndex].x && myblock.y === this.path[this.pathIndex].y) {
                         this.pathIndex++;
                     }
                 } else {
+                    // if we need to get path to a diffrent tile caulcalade it here
                     this.path = FindshortestPath(this.Lobby.map, myblock, curentTargetBlock);
                     this.pathIndex = 0;
                     this.lastBlockToGoTo = curentTargetBlock;
@@ -581,17 +582,28 @@ class enemy {
     };
 }
 
+// when we opens the server suscsesfully for websocket message
 wss.on("listening", () => {
+    // log Server started
     console.log("Server is sucsessfully started and redy to accept connections");
+    // start KeepPlayersConnected loop
     setInterval(() => KeepPlayersConnected(), 1000);
 });
 
+// This function is used to make the weboskcet not close. if the websocket dose note transfer any messages in 2 secends it closes
+// when the player is not playing a game this functin sends pings with useful information to the clients.
 function KeepPlayersConnected() {
+    // create a temporary list for all lobbys
     let playerinfolobbys = [];
+    // For every player
     players.forEach((player) => {
+        // if thay are not in a game (ingame means that thay get packets every 50 ms so no need for a update)
         if (player.InGame === false) {
+            // and thay are not in a lobby
             if (player.lobby === null) {
+                // and this is the first player that meats this reqerments
                 if (playerinfolobbys.length === 0) {
+                    // we shold cout eatch lobby into the list with lobby id
                     lobbys.forEach((lobby) => {
                         if (lobby.open) {
                             playerinfolobbys.push({
@@ -600,15 +612,20 @@ function KeepPlayersConnected() {
                         };
                     });
                 }
+                // and send it to all players not in a lobby
                 player.conection.send(JSON.stringify({type: "AvailebaleLobbys", data:{lobbys: playerinfolobbys}}));
             }
+            // if thay are in a lobby
             if (player.lobby != null) {
+                // we create a emty player list for that lobby that only going to contain the players namnes
                 Players = [];
+                // loop all players in that lobby and put thir names in the list
                 player.lobby.players.forEach(player => {
                     Players.push({
                         Username: player.Username
                     });
                 });
+                // send to player client who needed it to ssow to user
                 player.conection.send(JSON.stringify({type: "LobbyInfo", data: {lobbyID: player.lobby.ID, Players: Players, gameRunning: !!player.lobby.Interval}}));
             }
         }
@@ -617,31 +634,54 @@ function KeepPlayersConnected() {
 
 
 
-
+// This event happens when a new connection has happend
 wss.on("connection", (socket) => {
+    // when that happens we shoold
+    // log it
     console.log("Client connected");
-    players.set(socket, new player("Player " + playerjoinnumber,socket));
-    socket.send(JSON.stringify({ type: "Connection", data: { username: players.get(socket).Username } }));
+    // make a player object for them with name player and a number and connect player object to socket
+    playerObj = new player("Player " + playerjoinnumber,socket)
+    // send that it was a success
+    socket.send(JSON.stringify({ type: "Connection", data: { username: playerObj.username } }));
+    // bind it to the player map
+    players.set(socket, playerObj);
+    // add so next player gets one number higer
     playerjoinnumber++;
+    // log the username
     console.log("Assigned username:", players.get(socket).Username);
 
+    // if this conection recives any message that shold be sent to the function handelemessage that handels messages
     socket.on("message", (message) => handelemessage(message,socket));
 
+    // connection closes this means that player is leving
     socket.on("close", () => {
+        // we shold
+        // get the player 
         const player = players.get(socket)
+        // log the disconect
         console.log("Client disconnected:", player.Username);
+        // chek if thay whare in alobby and delete the frome that
         if (player.lobby != null) {
             const lobby = player.lobby
             lobby.players = lobby.players.filter((cplayer) => cplayer !== player);
+            // if the lobby is now emety 
             if (lobby.players.length === 0) {
+                // log deletion of that
                 console.log("Lobby is empty, Deleating lobby with ID " + lobby.ID)
+                // if it had a game started stop that
                 if (lobby.Interval != null) {
-                    clearInterval(lobby.Interval)
-                    lobby.Interval = null
+                    clearInterval(lobby.Interval);
+                    for (const Enemy of lobby.enemies) {
+                        clearInterval(Enemy.Interval);
+                        Enemy.Interval = null;
+                    }
+                    lobby.Interval = null;
                 }
+                // delete lobby
                 lobbys.delete(lobby.ID)
             }
         }
+        // delete player
         players.delete(socket);
     });
 });
