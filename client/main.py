@@ -71,6 +71,7 @@ class ServerComnicationHandler():
                 self.lobbys = []
                 break
             except Exception as e:
+                print(e)
                 ConnectionAttemt += 1
         ## IF we did not connect after 200 attempts we set gamestate to -1 which is the connection failed state, this will render a screan that tells the player that we failed to connect to the server and they should try again later, this could be due to the server being down or the player having no internet connection.
         if self.connection == None:
