@@ -516,6 +516,7 @@ class enemy {
         if (dy < 0) {
             this.position.y -= this.speed;
         }
+        console.log("moved")
     }
 
     // this is the game loop for the entetys AI system
