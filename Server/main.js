@@ -205,7 +205,6 @@ function createLobby() {
 
 // A* allgorithem for pathfinding, it takes a grid, a start position and an end position and returns the shortest path from start to end as a list of coordinates, this way we can have enemies that can navigate the map and find the player even if there are walls in the way, it also makes the game more fun and challenging to have enemies that can find their way to the player and make it harder for players to win the game.
 function FindshortestPath(grid, start, end) {
-    console.log("A* is here")
     // Gets length of the rows and colums
     const rows = grid.length;
     const cols = grid[0].length;
@@ -523,7 +522,6 @@ class enemy {
     // this is the game loop for the entetys AI system
     GameUpdate() {
         // log enemy position
-        console.log(this.position)
         // if we do not have a target or are target is no longer ingame the player died or won we find a new target
         if (this.target == null || this.target.InGame === false) {
             // so we do not know the closet player so it is null
