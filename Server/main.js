@@ -520,6 +520,7 @@ class enemy {
 
     // this is the game loop for the entetys AI system
     GameUpdate() {
+        // log enemy position
         console.log(this.position)
         // if we do not have a target or are target is no longer ingame the player died or won we find a new target
         if (this.target == null || this.target.InGame === false) {
