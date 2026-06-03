@@ -545,6 +545,7 @@ class enemy {
             // taget is the closest player ingame
             this.target = closestPlayer;
         }
+        console.log(this.target)
         // if we have a target
         if (this.target != null) {
             // we define withc tile entety are positiond as and call it my block
